@@ -133,8 +133,10 @@ Niall.on('message', msg => {
     
 	//tips reply
 	if (msg.content.match(/^![Tt]ip.?/)) {
-		var say=new Array("Have you looked at our "+GuideRef+"?  It has LOTS of tips and tricks.","You can learn more about the three types of Habitica tasks (Habits, Dailies, and To-Dos) in our"+GuideRef+".","Want to know more about the Habitica classes, check out our "+GuideRef+".","Checklists behave differently in Dailies and To-Dos, for more information, visit our "+GuideRef+".","Our upcoming quests are listed in "+QuestRef+". If you have a quest you want added, let us know in "+onconn+".");
-         msg.channel.send(say[Math.floor(Math.random()*say.length)]);
+		var say=new Array("Have you looked at our "+GuideRef+"?  It has LOTS of tips and tricks.","You can learn more about the three types of Habitica [tasks](https://discordapp.com/channels/664197181846061077/664199483025915904/664219509187411970) (Habits, Dailies, and To-Dos).","There's a pretty good description of the Habitica [classes](https://discordapp.com/channels/664197181846061077/664199483025915904/664219513172131843).","[Checklists](https://discordapp.com/channels/664197181846061077/664199483025915904/664219516519186473) behave differently in Dailies and To-Dos.","Our upcoming quests are listed in "+QuestRef+". If you have a quest you want added, let us know in "+onconn+".");
+		var embed = new Discord.RichEmbed()
+			.setDescription(say[Math.floor(Math.random()*say.length)]);
+		msg.channel.send({ embed });
     }
     // help text
 	if (msg.content.match(/^![Hh]elp/)||msg.content.match(/^[Hh]elp.*[Nn]iall.*/)) {
