@@ -5,7 +5,6 @@
 */
 
 // Set constants
-const CronJob = require('cron').CronJob;
 const Discord = require('discord.js');
 const Niall = new Discord.Client();
 const auth = require('/home/plex/bots/authNiall.json');
@@ -15,7 +14,7 @@ const Em = {};
 const Usr = {};
 Rems=[];
 cronjobs=[];
-
+workoutinfo=[];
 // Define Functions
 Ch.get=function(id) {
     return Niall.channels.get(this[id.toLowerCase()]||id.toLowerCase());
@@ -26,8 +25,9 @@ Ch.ref=function(id) {
 Ch.set=function(id,val) {
     this[id.toLowerCase()]=val;
 };
-function dailyworkout(program,part) {
-    onconn.send(WorkoutRef+" Beginning our workout! Today's workout: <https://darebee.com/programs/"+program+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)");
+function dailyworkout(obj) {
+    //onconn.send
+    console.log(WorkoutRef+" Beginning our workout! Today's workout: <https://darebee.com/programs/"+obj.program+".html?start="+obj.part+"> (If you want to join us, now or in the future, let us know!)");
 }
 function Mbr(mem,leadcap) {
     if (leadcap) {
@@ -60,17 +60,21 @@ Niall.on('ready', () => {
         Rems=rems;
         for (var a in Rems) {
             if (Rems[a][0]=="dailyworkout") {
-                    var c=0;
-                    for (var b=Number(Rems[a][5]);b<=Number(Rems[a][6]);b++) {
+                    function Workoutdata(a,b) {
+                        this.program=a;
+                        this.part=b;
+                    }
+                    for (var b=0;Number(Rems[a][5])+b<=Number(Rems[a][6]);b++) {
+                        var CronJob = require('cron').CronJob;
                         var now=new Date();
-                        //console.log(now.toISOString());
-                        //var year=now.getFullYear();
-                        var when=new Date()
-                        when.setFullYear(now.getFullYear());
-                        when.setMonth(Rems[a][1]-1);
-                        when.setDate(Number(Rems[a][2])+ c);
-                        when.setHours(Rems[a][3],0,0,0);
-                        cronjobs.push(new CronJob(when,function() {dailyworkout(Rems[a][4],(Number(Rems[a][5])+ c++).toString())},null,true,"America/New_York"));
+                        var when=new Date(now.getFullYear(), Number(Rems[a][1]-1), (Number(Rems[a][2])+ b), Number(Rems[a][3]), 0, 0, 0)
+                        /* for debugging
+                        when.setDate(Number(Rems[a][2])+ b-1);
+                        when.setHours(14,53,0,0); */
+                        var d=new Workoutdata(Rems[a][4],(Number(Rems[a][5])+ b));
+                        if (when > now) {
+                            cronjobs.push(new CronJob(when,function(){dailyworkout(d)},null,true,"America/New_York"));
+                        }
                     }
             }
         }
@@ -91,7 +95,7 @@ Niall.on('ready', () => {
     
     // Wakeup message.
     var say=["Ahem."];
-	onconn.send(say[Math.floor(Math.random()*say.length)]);
+	//onconn.send(say[Math.floor(Math.random()*say.length)]);
 });
 
 // Reply to messages
