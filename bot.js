@@ -44,8 +44,6 @@ Usr.set=function(id,val) {
 
 // acknowledge ready state
 Niall.on('ready', () => {
-    // console.log('Logged in as ${Niall.user.tag)!');
-    
     fs.readFile('/home/Plex/Bot/Niall/remember.csv', 'utf8', function(err, contents) {
         var rems
         if (contents.substr(contents.length-2,contents.length-1)=="\n") {
@@ -94,36 +92,36 @@ Niall.on('ready', () => {
     WorkoutRef = Usr.ref("workout");
     
     // Wakeup message.
-    var say=["Ahem."];
-	//onconn.send(say[Math.floor(Math.random()*say.length)]);
+    var say=["Ahem.","*Adjusts himself in the corner he's hiding in.*","];
+	onconn.send(say[Math.floor(Math.random()*say.length)]);
 });
 
 // Reply to messages
 Niall.on('message', msg => {
-    
+    var input=msg.content.toLowerCase();
     //Plain text social responses
-	if (msg.content.match(/^[Hh](e(llo)?|i|y)a?.* [Nn]iall.*/)) {
+	if (input.match(/^h(e(llo)?|i|y)a?.* niall.*/)) {
         var say=["Hiya, "+Mbr(msg.member,0)+".","Hiya."];
         msg.channel.send(say[Math.floor(Math.random()*say.length)]);
     }
-    if (msg.content.match(/^([Gg]ood ?)?([Bb]ye|[Nn](ight|ite)).* [Nn]iall.*/)) {
+    if (input.match(/^(good ?)?(bye|n(ight|ite)).* niall.*/)) {
         var say=["Later.","Later, "+Mbr(msg.member,0)+"."];
         msg.channel.send(say[Math.floor(Math.random()*say.length)]);
     }
-    if(msg.content.match(/[Mm]orning.* [Nn]iall.*/)) {
+    if(input.match(/morning.* niall.*/)) {
         var say=["What's up?","What's up, "+Mbr(msg.member,0)+"?"];
         msg.channel.send(say[Math.floor(Math.random()*say.length)]);
     }
-    if(msg.content.match(/[Tt]hank(s.*| ?you.*) [Nn]iall.*/)) {
+    if(input.match(/thank(s.*| ?you.*) niall.*/)) {
         var say=["You got it.","Uh-huh."];
         msg.channel.send(say[Math.floor(Math.random()*say.length)]);
     }
 
     // ping reply
-	if (msg.content.match(/^![Pp]ing/)) {
+	if (input.match(/^!ping/)) {
     }
     
-    if (msg.content.match(/^![Rr]emembered$/)) {
+    if (input.match(/^!remembered$/)) {
         var toSay="";
         for (var a in Rems) {
                 if (toSay != "") toSay+="\n"
@@ -136,20 +134,20 @@ Niall.on('message', msg => {
     }
     
 	//tips reply
-	if (msg.content.match(/^![Tt]ip.?/)) {
+	if (input.match(/^!tip.?/)) {
 		var say=["Have you looked at our "+GuideRef+"?  It has LOTS of tips and tricks.","You can learn more about the three types of Habitica [tasks](https://discordapp.com/channels/664197181846061077/664199483025915904/664219509187411970) (Habits, Dailies, and To-Dos).","There's a pretty good description of the Habitica [classes](https://discordapp.com/channels/664197181846061077/664199483025915904/664219513172131843).","[Checklists](https://discordapp.com/channels/664197181846061077/664199483025915904/664219516519186473) behave differently in Dailies and To-Dos.","Our upcoming quests are listed in "+QuestRef+". If you have a quest you want added, let us know in "+onconn+"."];
 		var embed = new Discord.RichEmbed()
 			.setDescription(say[Math.floor(Math.random()*say.length)]);
 		msg.channel.send({ embed });
     }
     // help text
-	if (msg.content.match(/^![Hh]elp/)||msg.content.match(/^[Hh]elp.*[Nn]iall.*/)) {
-		msg.channel.send(Mbr(msg.member,1)+", here's what I can do!\r\n\r\n!tips - I'll give you a random tip.\r\n!help - I'll display this message.");
+	if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {
+		msg.channel.send(Mbr(msg.member,1)+", here's what I can do!\r\n\r\n!tip - I'll give you a random tip.\r\n!help - I'll display this message.");
 	}
 	
 });
 
-// Member greeting
+// New member greeting
 Niall.on('guildMemberAdd', member => {
     newconn.send("Welcome, "+Mbr(member,0)+"!");
 });
