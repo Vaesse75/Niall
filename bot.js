@@ -1,12 +1,7 @@
 /*
     Future Plans:
-		Command to update remember file
-		Ping "Workout" on ?? day before ending (5-10) to select new program
-		MAYBE: Ping "leader" on last day of each workout to use above command (needed until purge)
-		Auto-purge of Remember file if all events are in the past
-		Birthdays: 
-			Ask for birthday
-			Birthday greetings after first message on birthday
+        Daily workout announcement
+        Birthday greetings after first message
 */
 
 // Set constants
@@ -51,7 +46,7 @@ Usr.set=function(id,val) {
 Niall.on('ready', () => {
     // console.log('Logged in as ${Niall.user.tag)!');
     
-    fs.readFile('/home/Plex/Bot/Niall/remember.txt', 'utf8', function(err, contents) {
+    fs.readFile('/home/Plex/Bot/Niall/remember.csv', 'utf8', function(err, contents) {
         var rems
         if (contents.substr(contents.length-2,contents.length-1)=="\n") {
             rems=contents.substr(0,contents.length-2).split("\n");
@@ -95,7 +90,7 @@ Niall.on('ready', () => {
     WorkoutRef = Usr.ref("workout");
     
     // Wakeup message.
-    var say=new Array("Ahem.");
+    var say=["Ahem."];
 	onconn.send(say[Math.floor(Math.random()*say.length)]);
 });
 
@@ -104,19 +99,19 @@ Niall.on('message', msg => {
     
     //Plain text social responses
 	if (msg.content.match(/^[Hh](e(llo)?|i|y)a?.* [Nn]iall.*/)) {
-        var say=new Array("Hiya, "+Mbr(msg.member,0)+".","Hiya.");
+        var say=["Hiya, "+Mbr(msg.member,0)+".","Hiya."];
         msg.channel.send(say[Math.floor(Math.random()*say.length)]);
     }
     if (msg.content.match(/^([Gg]ood ?)?([Bb]ye|[Nn](ight|ite)).* [Nn]iall.*/)) {
-        var say=new Array("Later.","Later, "+Mbr(msg.member,0)+".");
+        var say=["Later.","Later, "+Mbr(msg.member,0)+"."];
         msg.channel.send(say[Math.floor(Math.random()*say.length)]);
     }
     if(msg.content.match(/[Mm]orning.* [Nn]iall.*/)) {
-        var say=new Array("What's up?","What's up, "+Mbr(msg.member,0)+"?");
+        var say=["What's up?","What's up, "+Mbr(msg.member,0)+"?"];
         msg.channel.send(say[Math.floor(Math.random()*say.length)]);
     }
     if(msg.content.match(/[Tt]hank(s.*| ?you.*) [Nn]iall.*/)) {
-        var say=new Array("You got it.","Uh-huh.");
+        var say=["You got it.","Uh-huh."];
         msg.channel.send(say[Math.floor(Math.random()*say.length)]);
     }
 
@@ -138,7 +133,7 @@ Niall.on('message', msg => {
     
 	//tips reply
 	if (msg.content.match(/^![Tt]ip.?/)) {
-		var say=new Array("Have you looked at our "+GuideRef+"?  It has LOTS of tips and tricks.","You can learn more about the three types of Habitica [tasks](https://discordapp.com/channels/664197181846061077/664199483025915904/664219509187411970) (Habits, Dailies, and To-Dos).","There's a pretty good description of the Habitica [classes](https://discordapp.com/channels/664197181846061077/664199483025915904/664219513172131843).","[Checklists](https://discordapp.com/channels/664197181846061077/664199483025915904/664219516519186473) behave differently in Dailies and To-Dos.","Our upcoming quests are listed in "+QuestRef+". If you have a quest you want added, let us know in "+onconn+".");
+		var say=["Have you looked at our "+GuideRef+"?  It has LOTS of tips and tricks.","You can learn more about the three types of Habitica [tasks](https://discordapp.com/channels/664197181846061077/664199483025915904/664219509187411970) (Habits, Dailies, and To-Dos).","There's a pretty good description of the Habitica [classes](https://discordapp.com/channels/664197181846061077/664199483025915904/664219513172131843).","[Checklists](https://discordapp.com/channels/664197181846061077/664199483025915904/664219516519186473) behave differently in Dailies and To-Dos.","Our upcoming quests are listed in "+QuestRef+". If you have a quest you want added, let us know in "+onconn+"."];
 		var embed = new Discord.RichEmbed()
 			.setDescription(say[Math.floor(Math.random()*say.length)]);
 		msg.channel.send({ embed });
