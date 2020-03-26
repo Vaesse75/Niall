@@ -7,11 +7,13 @@
 // Set constants
 const Discord = require('discord.js');
 const Niall = new Discord.Client();
+const CronJob = require('cron').CronJob;
 const auth = require('/home/plex/bots/authNiall.json');
 const fs = require('fs');
 const Ch = {};
 const Em = {};
 const Usr = {};
+Rems=[];
 
 // Define Functions
 Ch.get=function(id) {
@@ -39,7 +41,15 @@ Usr.set=function(id,val) {
 // acknowledge ready state
 Niall.on('ready', () => {
     // console.log('Logged in as ${Niall.user.tag)!');
-    
+
+    fs.readFile('/home/Plex/Bot/Niall/rememer.txt', 'utf8', function(err, contents) {
+        var rems=contents.split("\n");
+        for (var a in rems) {
+            rems[a]=rems[a].substr(1,recs[a].length-2).split("\",\"");
+        }
+	Rems=rems;
+	console.log(Rems);
+    });
     //define Ch and Usr objects.
 	Ch.set("inn","664197181846061080");
 	Ch.set("guide","664199483025915904");
