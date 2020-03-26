@@ -1,7 +1,12 @@
 /*
     Future Plans:
-        Daily workout announcement
-        Birthday greetings after first message
+		Command to update remember file
+		Ping "Workout" on ?? day before ending (5-10) to select new program
+		MAYBE: Ping "leader" on last day of each workout to use above command (needed until purge)
+		Auto-purge of Remember file if all events are in the past
+		Birthdays: 
+			Ask for birthday
+			Birthday greetings after first message on birthday
 */
 
 // Set constants
@@ -70,7 +75,7 @@ Niall.on('ready', () => {
                         when.setMonth(Rems[a][1]-1);
                         when.setDate(Number(Rems[a][2])+ c);
                         when.setHours(Rems[a][3],0,0,0);
-                        cronjobs.push(new CronJob(when,function() {Rems[a][4],dailyworkout((Number(Rems[a][5])+ c++).toString())},null,true,"America/New_York"));
+                        cronjobs.push(new CronJob(when,function() {dailyworkout(Rems[a][4],(Number(Rems[a][5])+ c++).toString())},null,true,"America/New_York"));
                     }
             }
         }
