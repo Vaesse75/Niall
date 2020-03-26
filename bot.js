@@ -5,6 +5,7 @@
 */
 
 // Set constants
+const CronJob = require('cron').CronJob;
 const Discord = require('discord.js');
 const Niall = new Discord.Client();
 const auth = require('/home/plex/bots/authNiall.json');
@@ -12,6 +13,8 @@ const fs = require('fs');
 const Ch = {};
 const Em = {};
 const Usr = {};
+Rems=[];
+cronjobs=[];
 
 // Define Functions
 Ch.get=function(id) {
@@ -23,6 +26,9 @@ Ch.ref=function(id) {
 Ch.set=function(id,val) {
     this[id.toLowerCase()]=val;
 };
+function dailyworkout(program,part) {
+    onconn.send(WorkoutRef+" Beginning our workout! Today's workout: <https://darebee.com/programs/"+program+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)");
+}
 function Mbr(mem,leadcap) {
     if (leadcap) {
         return mem||"Friend";
@@ -40,16 +46,48 @@ Usr.set=function(id,val) {
 Niall.on('ready', () => {
     // console.log('Logged in as ${Niall.user.tag)!');
     
+    fs.readFile('/home/Plex/Bot/Niall/remember.txt', 'utf8', function(err, contents) {
+        var rems
+        if (contents.substr(contents.length-2,contents.length-1)=="\n") {
+            rems=contents.substr(0,contents.length-2).split("\n");
+        }
+        else {
+            rems=contents.split("\n");
+        }
+        for (var a in rems) {
+            rems[a]=rems[a].substr(1,rems[a].length-2).split("\",\"");
+        }
+        Rems=rems;
+        for (var a in Rems) {
+            if (Rems[a][0]=="dailyworkout") {
+                    var c=0;
+                    for (var b=Number(Rems[a][5]);b<=Number(Rems[a][6]);b++) {
+                        var now=new Date();
+                        //console.log(now.toISOString());
+                        //var year=now.getFullYear();
+                        var when=new Date()
+                        when.setFullYear(now.getFullYear());
+                        when.setMonth(Rems[a][1]-1);
+                        when.setDate(Number(Rems[a][2])+ c);
+                        when.setHours(Rems[a][3],0,0,0);
+                        cronjobs.push(new CronJob(when,function() {Rems[a][4],dailyworkout((Number(Rems[a][5])+ c++).toString())},null,true,"America/New_York"));
+                    }
+            }
+        }
+    });
+    
     //define Ch and Usr objects.
 	Ch.set("inn","664197181846061080");
 	Ch.set("guide","664199483025915904");
 	Ch.set("quest","665311310581596160");
 	Usr.set("leader","666316148589068328");
+    Usr.set("workout","674677574898548766");
     
     // define frequently used channels.
     onconn = Ch.get("inn");
     GuideRef = Ch.ref("guide");
 	QuestRef = Ch.ref("quest");
+    WorkoutRef = Usr.ref("workout");
     
     // Wakeup message.
     var say=new Array("Ahem.");
@@ -81,9 +119,21 @@ Niall.on('message', msg => {
 	if (msg.content.match(/^![Pp]ing/)) {
     }
     
+    if (msg.content.match(/^![Rr]emembered$/)) {
+        var toSay="";
+        for (var a in Rems) {
+                if (toSay != "") toSay+="\n"
+            for (var b in Rems[a]) {
+                if (toSay != "") toSay+=","
+                toSay+="\""+Rems[a][b]+"\"";
+            }
+        }
+        msg.channel.send(toSay);
+    }
+    
 	//tips reply
 	if (msg.content.match(/^![Tt]ip.?/)) {
-	var say=new Array("Have you looked at our "+GuideRef+"?  It has LOTS of tips and tricks.","You can learn more about the three types of Habitica tasks (Habits, Dailies, and To-Dos) in our"+GuideRef+".","Want to know more about the Habitica classes, check out our "+GuideRef+".","Checklists behave differently in Dailies and To-Dos, for more information, visit our "+GuideRef+".","Our upcoming quests are listed in "+QuestRef+". If you have a quest you want added, let us know in "+onconn+".");
+		var say=new Array("Have you looked at our "+GuideRef+"?  It has LOTS of tips and tricks.","You can learn more about the three types of Habitica tasks (Habits, Dailies, and To-Dos) in our"+GuideRef+".","Want to know more about the Habitica classes, check out our "+GuideRef+".","Checklists behave differently in Dailies and To-Dos, for more information, visit our "+GuideRef+".","Our upcoming quests are listed in "+QuestRef+". If you have a quest you want added, let us know in "+onconn+".");
          msg.channel.send(say[Math.floor(Math.random()*say.length)]);
     }
     // help text
