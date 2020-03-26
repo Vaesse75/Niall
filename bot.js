@@ -7,13 +7,11 @@
 // Set constants
 const Discord = require('discord.js');
 const Niall = new Discord.Client();
-const CronJob = require('cron').CronJob;
 const auth = require('/home/plex/bots/authNiall.json');
 const fs = require('fs');
 const Ch = {};
 const Em = {};
 const Usr = {};
-Rems=[];
 
 // Define Functions
 Ch.get=function(id) {
@@ -41,23 +39,17 @@ Usr.set=function(id,val) {
 // acknowledge ready state
 Niall.on('ready', () => {
     // console.log('Logged in as ${Niall.user.tag)!');
-
-    fs.readFile('/home/Plex/Bot/Niall/rememer.txt', 'utf8', function(err, contents) {
-        var rems=contents.split("\n");
-        for (var a in rems) {
-            rems[a]=rems[a].substr(1,recs[a].length-2).split("\",\"");
-        }
-	Rems=rems;
-	console.log(Rems);
-    });
+    
     //define Ch and Usr objects.
 	Ch.set("inn","664197181846061080");
 	Ch.set("guide","664199483025915904");
+	Ch.set("quest","665311310581596160");
 	Usr.set("leader","666316148589068328");
     
     // define frequently used channels.
     onconn = Ch.get("inn");
     GuideRef = Ch.ref("guide");
+	QuestRef = Ch.ref("quest");
     
     // Wakeup message.
     var say=new Array("Ahem.");
@@ -91,7 +83,7 @@ Niall.on('message', msg => {
     
 	//tips reply
 	if (msg.content.match(/^![Tt]ip.?/)) {
-		var say=new Array("Have you looked at our "+GuideRef+"?  It has LOTS of tips and tricks.");
+	var say=new Array("Have you looked at our "+GuideRef+"?  It has LOTS of tips and tricks.","You can learn more about the three types of Habitica tasks (Habits, Dailies, and To-Dos) in our"+GuideRef+".","Want to know more about the Habitica classes, check out our "+GuideRef+".","Checklists behave differently in Dailies and To-Dos, for more information, visit our "+GuideRef+".","Our upcoming quests are listed in "+QuestRef+". If you have a quest you want added, let us know in "+onconn+".");
          msg.channel.send(say[Math.floor(Math.random()*say.length)]);
     }
     // help text
