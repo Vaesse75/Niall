@@ -19,14 +19,14 @@ cronjobs=[];
 workoutinfo=[];
 
 // Define Functions
-Bday.add=function() {
+//Bday.add=function() {
 	//accept user birthday input
 	//"If you tell me your birthday, I'll try to remember to celebrate it with you."
-}
-Bday.chk=function() {
+//}
+//Bday.chk=function() {
 	//tell user "happy birthday" on their birthday after their first message
 	//"It looks like today is your birthday, [so-and-so].  Hope it's wonderful!"
-}
+//}
 Ch.get=function(id) {
     return Niall.channels.get(this[id.toLowerCase()]||id.toLowerCase());
 };
@@ -132,7 +132,7 @@ Niall.on('message', msg => {
     if (input.match(/^!quest/)) {
 		//Pinged function sets a timer for 23 hours
 		//"@everyone New quest will start in an hour.  Last chance to accept."
-		msg.channel.send("Sorry, I haven't learned how to do this yet.\r\n*Returns to his corner and sobs quietly.*);
+		msg.channel.send("Sorry, I haven't learned how to do this yet.\r\n*Returns to his corner and sobs quietly.*");
 	}
 	
     // ping reply
