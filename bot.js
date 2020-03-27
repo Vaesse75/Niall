@@ -45,14 +45,13 @@ Niall.on('ready', () => {
     
     // Wakeup message
     var say=["Ahem.","*Adjusts himself in the corner he's hiding in.*","*Sits up.*"];
-	//onconn.send(say[Math.floor(Math.random()*say.length)]);
+	onconn.send(say[Math.floor(Math.random()*say.length)]);
 });
 
 // Reply to messages
 Niall.on('message', msg => {
 	// Respond to any capitalization
     input=msg.content.toLowerCase();
-	//module.exports={msg:msg,input:input};
 	
     // Triggered responses
 	if (input.match(/^!ping/)) {
@@ -74,7 +73,7 @@ Niall.on('message', msg => {
 	};
 	quest=require('./quest.js')(input); // Quest
 	if (quest) {
-		msg.channel.send(social);
+		msg.channel.send(quest);
 	};
 });
 
