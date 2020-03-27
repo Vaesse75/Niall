@@ -1,7 +1,7 @@
 {
-  "name": "Carl",
-  "version": "1.1.1",
-  "description": "Discord Plex Bot",
+  "name": "Niall",
+  "version": "1.0",
+  "description": "Habitica Bot",
   "main": "bot.js",
   "readmeFilename": "changelog.txt",
   "dependencies": {
@@ -12,5 +12,5 @@
     "fs": "0.0.1-security",
     "linux-shell-command": "0.0.6"
   },
-  "author": "jasoncollege24 & caseyomah & vaesse"
+  "author": "vaesse & caseyomah & jasoncollege24"
 }
