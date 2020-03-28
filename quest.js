@@ -5,6 +5,6 @@ module.exports=function(input) {
 		"New quest just posted!"
 		//At 23 hours
 		"@everyone New quest will start in an hour.  Last chance to accept." */
-		return "Sorry, I haven't learned how to do this yet.\n*Returns to his corner and sobs quietly.*";
+		return "Sorry, I haven't learned how to do this yet.\n\n*Returns to his corner and sobs quietly.*";
 	}
 };

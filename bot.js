@@ -100,7 +100,7 @@ Niall.on('message', msg => {
 	say=require('./tips.js')(input); // Tips
 	if (say) {
 		var embed = new Discord.RichEmbed()
-			.setColor(ffffff)
+			.setColor('#ffffcc')
 			.setDescription(say);
 		msg.channel.send({ embed });
 	};
