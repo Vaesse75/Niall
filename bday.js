@@ -35,7 +35,7 @@ module.exports.Add=function(msg, say) {
 	}
 	else {
 		// Respond to function call and ask for birthady
-		say("If you tell me your birthday, I'll try to remember to celebrate it with you.\n\nI'll need (separated by spaces):\n**!bday**, your **prefered name**, birth **month** (01-12), birth **day** (01-31).");
+		say("If you tell me your birthday, I'll try to remember to celebrate it with you.\n\nI'll need (separated by spaces):\n**!bday**, your **preferred name**, birth **month** (01-12), birth **day** (01-31).");
 	}
 }
 

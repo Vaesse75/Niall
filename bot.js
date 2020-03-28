@@ -1,10 +1,23 @@
 /*
     Future Plans:
+		bot.js
+			Make announce function embeds with passed color variable
 		workout.js
 			Sync
 			Cron
 			Cleanup
-        quest.js functioning
+		darebee.js
+			darebee.csv for programs
+				Level 1-5 integer
+				Name
+				Notes (non-integer level, RP, story, etc.)
+				Active?
+			Add darebee progrmas to csv via prompt
+			Ask levels for new vote
+			Call for new vote
+        quest.js
+			At prompt, start timer for 23 hours (record to file, for recovery if needed)
+			After timer expires, announce and clear file
         bday.js
 			Sch to internal?
 			Passes (Sch and msg) not working?
@@ -21,17 +34,37 @@ const Birthday = require('./bday.js');
 Sch=Birthday.Import();
 Rems=[];
 cronjobs=[];
-module.exports=bot;
+//module.exports=bot;
 
 //Announce functions
-announce=function(say) {
+chat=function(say,channel) {
 	if (say) {
-		onconn.send(say);
+		if (!channel) {
+			channel=onconn;
+			console.log("No channel sent for: "+say)
+		}
+		channel.send(say);
 	};
 }
-test=function(say) {
+test=function(say,channel) {
+	if (!channel) {
+		channel=onconn;
+		console.log("No channel sent for:")
+	}
+	console.log(say);
+}
+richChat=function(say,color,channel) {
 	if (say) {
-		console.log(say);
+		if (!color) {
+			color='#000000';
+		}
+		if (!channel) {
+			channel=onnconn;
+		}
+		var embed = new Discord.RichEmbed()
+			.setColor(color)
+			.setDescription(say);
+		channel.send({ embed });
 	};
 }
 
@@ -82,28 +115,22 @@ Niall.on('message', msg => {
 	}
 	if (input.match(/^!bday/)) {
 		chk=undefined;
-		chk=Birthday.Add(msg,announce);
+		chk=Birthday.Add(msg,chat);
 		if (chk) {
 			Sch=chk;
 		}
 	}
 	// Having errors passing Sch as a whole and msg
 	chk=undefined;
-	chk=Birthday.Check(msg.author.id,Sch[msg.author.id],announce);
+	chk=Birthday.Check(msg.author.id,Sch[msg.author.id],chat);
 	if (chk) {
 		Sch=chk;
 	}
 	
 	// Modularized responses
-	announce(require('./social.js')(input)); // Social responses
-	announce(require('./quest.js')(input)); // Quest announcer
-	say=require('./tips.js')(input); // Tips
-	if (say) {
-		var embed = new Discord.RichEmbed()
-			.setColor('#ffffcc')
-			.setDescription(say);
-		msg.channel.send({ embed });
-	};
+	chat(require('./social.js')(input),msg.channel); // Social responses
+	chat(require('./quest.js')(input),msg.channel); // Quest chatr
+	richChat(require('./tips.js')(input),'#ffffcc',msg.channel); // Tips
 });
 
 // New member greeting
