@@ -1,7 +1,5 @@
 /*
     Future Plans:
-		bot.js
-			Make announce function embeds with passed color variable
 		workout.js
 			Sync
 			Cron
@@ -93,28 +91,33 @@ Niall.on('ready', () => {
     WorkoutRef = Role.ref("workout");
     
     // Wakeup message
-    var say=["Ahem.","*Adjusts himself in the corner he's hiding in.*","*Sits up.*","*Coughs quietly.*","*Hums under his breath.*"];
-	onconn.send(say[Math.floor(Math.random()*say.length)]);
+    var say=[
+		"Ahem.",
+		"*Adjusts himself in the corner he's hiding in.*",
+		"*Sits up.*",
+		"*Coughs quietly.*",
+		"*Hums under his breath.*",
+		"*Shakes his head to wake himself up.*",
+		"*Blinks his eyes several times.*"
+	];
+	chat(say[Math.floor(Math.random()*say.length)],onconn);
 	
 	// Function calls
 	workout=require('./workout.js');
 	workout.Schedule(workout.Daily,test);
-
-	//Bday
 });
 
 // Reply to messages
 Niall.on('message', msg => {
 	// Respond to any capitalization
     var input=msg.content.toLowerCase();
-	var chk=undefined;
-	
+
     // Triggered responses
 	if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {
-		msg.channel.send(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let everyone know when there's an hour left until the quest is set to start. (Not working yet.)\n**!help** - I'll display this message.");
+		chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let everyone know when there's an hour left until the quest is set to start. (Not working yet.)\n**!help** - I'll display this message.",msg.channel);
 	}
 	if (input.match(/^!bday/)) {
-		chk=undefined;
+		var chk=undefined;
 		chk=Birthday.Add(msg,chat);
 		if (chk) {
 			Sch=chk;
