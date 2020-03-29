@@ -1,27 +1,3 @@
-/*
-    Future Plans:
-		bot.js
-			roles (MAY be own separate js)
-				classes(pick ONE)
-				pronoun(s)(EACH on/off)
-				quester(on/off)
-				co-op workout(on/off)
-		workout.js
-			Sync
-			Cron
-			Cleanup
-		darebee.js
-			Add new darebee progrmas to csv via prompt
-			Vote for levels for next vote
-			Call for new vote
-        quest.js
-			At prompt, start timer for 23 hours (record to file, for recovery if needed)
-			After timer expires, announce and clear file
-        bday.js
-			Sch to internal
-			Passes (Sch and msg) not working?
-*/
-
 // Set constants and variables
 const Discord = require('discord.js');
 const Niall = bot = new Discord.Client();
@@ -30,7 +6,6 @@ const fs = require('fs');
 const Ch = require('./ch.js');
 const Role = require('./role.js');
 const Birthday = require('./bday.js');
-//Sch=Birthday.Import();
 Rems=[];
 cronjobs=[];
 
