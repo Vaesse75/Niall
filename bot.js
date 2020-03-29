@@ -1,23 +1,24 @@
 /*
     Future Plans:
+		bot.js
+			roles (MAY be own separate js)
+				classes(pick ONE)
+				pronoun(s)(EACH on/off)
+				quester(on/off)
+				co-op workout(on/off)
 		workout.js
 			Sync
 			Cron
 			Cleanup
 		darebee.js
-			darebee.csv for programs
-				Level 1-5 integer
-				Name
-				Notes (non-integer level, RP, story, etc.)
-				Active?
-			Add darebee progrmas to csv via prompt
-			Ask levels for new vote
+			Add new darebee progrmas to csv via prompt
+			Vote for levels for next vote
 			Call for new vote
         quest.js
 			At prompt, start timer for 23 hours (record to file, for recovery if needed)
 			After timer expires, announce and clear file
         bday.js
-			Sch to internal?
+			Sch to internal
 			Passes (Sch and msg) not working?
 */
 
@@ -29,10 +30,9 @@ const fs = require('fs');
 const Ch = require('./ch.js');
 const Role = require('./role.js');
 const Birthday = require('./bday.js');
-Sch=Birthday.Import();
+//Sch=Birthday.Import();
 Rems=[];
 cronjobs=[];
-//module.exports=bot;
 
 //Announce functions
 chat=function(say,channel) {
@@ -58,6 +58,7 @@ richChat=function(say,color,channel) {
 		}
 		if (!channel) {
 			channel=onnconn;
+			console.log("No channel sent for (rich): "+say)
 		}
 		var embed = new Discord.RichEmbed()
 			.setColor(color)
@@ -66,13 +67,9 @@ richChat=function(say,color,channel) {
 	};
 }
 
-
-// Replace User reference with "friend" when no user referenced
+// Replace user reference with "friend" (proper case) when no user referenced
 Mbr=function(mem,leadcap) {
-    if (leadcap) {
-        return mem||"Friend";
-    }
-    else return mem||"friend";
+	return leadcap?mem||"Friend":mem||"friend";
 }
 
 // Initial setup
@@ -117,28 +114,19 @@ Niall.on('message', msg => {
 		chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let everyone know when there's an hour left until the quest is set to start. (Not working yet.)\n**!help** - I'll display this message.",msg.channel);
 	}
 	if (input.match(/^!bday/)) {
-		var chk=undefined;
-		chk=Birthday.Add(msg,chat);
-		if (chk) {
-			Sch=chk;
-		}
+		Birthday.Add(msg, chat);
 	}
-	// Having errors passing Sch as a whole and msg
-	chk=undefined;
-	chk=Birthday.Check(msg.author.id,Sch[msg.author.id],chat);
-	if (chk) {
-		Sch=chk;
-	}
-	
+
 	// Modularized responses
 	chat(require('./social.js')(input),msg.channel); // Social responses
-	chat(require('./quest.js')(input),msg.channel); // Quest chatr
+	chat(require('./quest.js')(input),msg.channel); // Quest announcements
+	chat(Birthday.Check(msg.author.id),msg.channel); // Birthday greetings
 	richChat(require('./tips.js')(input),'#ffffcc',msg.channel); // Tips
 });
 
 // New member greeting
 Niall.on('guildMemberAdd', member => {
-    newconn.send("Welcome to the party, "+Mbr(member,0)+"! If you're new to Habitica, please check out "+GuideRef+".");
+    chat("Welcome to the party, "+Mbr(member,0)+"! If you're new to Habitica, please check out "+GuideRef+".\n\nTo see what I can help you with, type `!help`.");
 });
 
 Niall.login(auth.token);
