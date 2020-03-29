@@ -1,6 +1,6 @@
 {
 	"name": "Niall",
-	"version": "1.1",
+	"version": "1.2",
 	"description": "Habitica Bot",
 	"main": "niall.js",
 	"script": {

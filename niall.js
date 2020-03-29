@@ -10,8 +10,8 @@ const Darebee = require('./darebee.js');
 Rems=[];
 cronjobs=[];
 
-//Announce functions
-var testmode=true; // Comment this line out for normal operations
+// Announce functions
+//var testmode=true; // Comment this line out for normal operations
 chat=function(say,channel) {
 	if (say) {
 		if (!channel) {
@@ -109,11 +109,15 @@ Niall.on('message', msg => {
 	}
 	
 	if (input.match(/^!level/)) {
-		Darebee.Level(msg,chat);
+		Darebee.Level(msg,chat,WorkoutRef);
 	}
 	
-	if (input.match(/^!program/)) {
-		Darebee.Program(msg,chat,level);
+	if (input.match(/^!program ?([1-5]*)/)) {
+		level=input.match(/^!program ?([1-5]*)/);
+		if (level) {
+			level=level[1];
+		}
+		Darebee.Program(msg,chat,level,heraldConn,WorkoutRef);
 	}
 	
 	// Modularized responses
