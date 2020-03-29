@@ -6,17 +6,40 @@ const fs = require('fs');
 const Ch = require('./ch.js');
 const Role = require('./role.js');
 const Birthday = require('./bday.js');
+const Darebee = require('./darebee.js');
 Rems=[];
 cronjobs=[];
 
 //Announce functions
+var testmode=true; // Comment this line out for normal operations
 chat=function(say,channel) {
 	if (say) {
 		if (!channel) {
-			channel=onconn;
+			channel=onConn;
 			console.log("No channel sent for: "+say)
 		}
-		channel.send(say);
+		if (testmode) {
+			channel=testConn;
+		}
+		return channel.send(say);
+	};
+}
+richChat=function(say,color,channel) {
+	if (say) {
+		if (!color) {
+			color='#000000';
+		}
+		if (!channel) {
+			channel=onConn;
+			console.log("No channel sent for (rich): "+say)
+		}
+		if (testmode) {
+			channel=testConn;
+		}
+		var embed = new Discord.RichEmbed()
+			.setColor(color)
+			.setDescription(say);
+		return channel.send({ embed });
 	};
 }
 test=function(say,channel) {
@@ -25,21 +48,6 @@ test=function(say,channel) {
 		console.log("No channel sent for:")
 	}
 	console.log(say);
-}
-richChat=function(say,color,channel) {
-	if (say) {
-		if (!color) {
-			color='#000000';
-		}
-		if (!channel) {
-			channel=onnconn;
-			console.log("No channel sent for (rich): "+say)
-		}
-		var embed = new Discord.RichEmbed()
-			.setColor(color)
-			.setDescription(say);
-		channel.send({ embed });
-	};
 }
 
 // Replace user reference with "friend" (proper case) when no user referenced
@@ -53,14 +61,18 @@ Niall.on('ready', () => {
 	Ch.set("inn","664197181846061080");
 	Ch.set("guide","664199483025915904");
 	Ch.set("quest","665311310581596160");
+	Ch.set("test","693847888396288090");
+	Ch.set("herald","664889622987538435");
 	Role.set("leader","666316148589068328");
     Role.set("workout","674677574898548766");
     
     // Define frequently used references
-    onconn = Ch.get("inn");
-    GuideRef = Ch.ref("guide");
+    onConn = Ch.get("inn");
+	testConn = Ch.get("test");
+	heraldConn = Ch.get("herald");
+	GuideRef = Ch.ref("guide");
 	QuestRef = Ch.ref("quest");
-    WorkoutRef = Role.ref("workout");
+	WorkoutRef = Role.ref("workout");
     
     // Wakeup message
     var say=[
@@ -72,7 +84,7 @@ Niall.on('ready', () => {
 		"*Shakes his head to wake himself up.*",
 		"*Blinks his eyes several times.*"
 	];
-	chat(say[Math.floor(Math.random()*say.length)],onconn);
+	chat(say[Math.floor(Math.random()*say.length)],onConn);
 	
 	// Function calls
 	workout=require('./workout.js');
@@ -83,15 +95,27 @@ Niall.on('ready', () => {
 Niall.on('message', msg => {
 	// Respond to any capitalization
     var input=msg.content.toLowerCase();
-
-    // Triggered responses
+	
+	// Triggered responses
 	if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {
 		chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let everyone know when there's an hour left until the quest is set to start. (Not working yet.)\n**!help** - I'll display this message.",msg.channel);
 	}
 	if (input.match(/^!bday/)) {
-		Birthday.Add(msg, chat);
+		Birthday.Add(msg,chat);
 	}
 
+	if (input.match(/^!dbprogram/)) {
+		Darebee.Add(msg,chat);
+	}
+	
+	if (input.match(/^!level/)) {
+		Darebee.Level(msg,chat);
+	}
+	
+	if (input.match(/^!program/)) {
+		Darebee.Program(msg,chat,level);
+	}
+	
 	// Modularized responses
 	chat(require('./social.js')(input),msg.channel); // Social responses
 	chat(require('./quest.js')(input),msg.channel); // Quest announcements

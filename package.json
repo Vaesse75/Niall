@@ -1,16 +1,19 @@
 {
-  "name": "Niall",
-  "version": "1.1",
-  "description": "Habitica Bot",
-  "main": "bot.js",
-  "readmeFilename": "changelog.txt",
-  "dependencies": {
-    "@discordjs/uws": "^10.149.0",
-    "cron": "^1.8.2",
-    "discord": "^0.8.2",
-    "discord.js": "^11.5.1",
-    "fs": "0.0.1-security",
-    "linux-shell-command": "0.0.6"
-  },
-  "author": "vaesse & caseyomah & jasoncollege24"
+	"name": "Niall",
+	"version": "1.1",
+	"description": "Habitica Bot",
+	"main": "niall.js",
+	"script": {
+		"start": "node ."
+	},
+	"readmeFilename": "changelog.txt",
+	"dependencies": {
+		"@discordjs/uws": "^10.149.0",
+		"cron": "^1.8.2",
+		"discord": "^0.8.2",
+		"discord.js": "^11.5.1",
+		"fs": "0.0.1-security",
+		"linux-shell-command": "0.0.6"
+	},
+	"author": "vaesse & caseyomah & jasoncollege24"
 }

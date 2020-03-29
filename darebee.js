@@ -1,15 +1,59 @@
-module.exports=function(input) {
-	// Darebee Pick Levels
-	"What level(s) would you like to be included in the vote for next Darebee program? (level 1-5)"
-	
-	
-	// Send to #extra-extra channel on trigger
+//Set contants and variables
+var fs = require('fs');
+const Usr = require('./user.js');
+var file="/home/Plex/Bot/Niall/darebee.csv";
 
+emoji=function(msg,emojiName) {
+	console.log(client.emojis);
+	// Works for server emoji ONLY.  Can NOT find Discord generic emoji.
+	return msg.guild.emojis.find(emoji => emoji.name === emojiName);
+}
+
+module.exports.Add=function(msg,say) {
+	// Declare variables
+	var input=msg.content;
+	var ID=msg.author.id;
+	var info=input.match(/^!dbprogram \"(.+)\" \"([1-5])\" \"(.+)\" \"(.+)\" \"(.*)\"/);
+	
+	if (info && info.length==6) {
+		var name=info[1];
+		var level=info[2];
+		var URL=info[3];
+		var emojiName=info[4];
+		var notes=info[5];
+		
+		// Confirm correct information
+		say("Just to confirm, I have a new level "+level+" program called "+name+". The URL for this program is <https://darebee.com/programs/"+URL+".html> and the emoji is "+emoji(msg,emojiName)+".",msg.channel);
+		
+		// Record to csv file
+		//fs.appendFileSync(file, '"'+ID+'","'+name+'","'+day+'","'+month+'",""\n');
+		say("I've added that program to my book.",msg.channel);
+		
+		Import();
+	}
+	else {
+		// Respond to function call and ask for data
+		say('Reminder, you need to add the emoji for the program to Discord first. I need the new program in this format:\n\n**!DBProgram** **"program name"** (plain text) **"level"** (1-5, integers only) **"URL"** (just the page name without the .html extension) **"emoji name"** (do not include the `:`s, must be on this server) **"any notes"** (use "" if no notes).',msg.channel);
+	}
+}
+
+module.exports.Level=function(msg,say) {
+	// Darebee Pick Levels
+	say("@Co-op Workout: What level(s) would you like to be included in the vote for next Darebee program?",msg.channel).then(async (say) => {
+		await say.react("1️⃣");
+		await say.react("2️⃣");
+		await say.react("3️⃣");
+		await say.react("4️⃣");
+		await say.react("5️⃣");
+	});
+}
+
+module.exports.Program=function(msg,say,level) {	
 	// Universal message
 
-	"@Co-op Workout: The **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.
-
-	Repeat Current Program:
+	say("@Co-op Workout: The **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n\nRepeat Current Program:\n",msg.channel)
+/*
+	
 	:ballot_box_with_check: "+ProgramName+" <https://darebee.com/programs/"+ProgramURL+".html>.  (If we repeat, we could all attempt to work to a higher level than we did previously.)
 
 	<Chosen Level(s)>
@@ -25,4 +69,5 @@ level2=❷
 level3=❸
 level4=❹
 level5=❺
+*/
 }
