@@ -8,34 +8,37 @@ emoji=function(msg,emojiName) {
 	return msg.guild.emojis.find(emoji => emoji.name === emojiName);
 }
 
+// Add Darebee programs
 module.exports.Add=function(msg,say) {
 	// Declare variables
 	var input=msg.content;
 	var ID=msg.author.id;
-	var info=input.match(/^!dbprogram \"(.+)\" \"([1-5])\" \"(.+)\" \"(.+)\" \"(.*)\"/);
+	var info=input.match(/^!dbprogram \"(.+)\" \"([1-5])\" \"(.+)\" \"(.+)\" \"(.*)\" \"([1-5]{2})\"/);
 	
-	if (info && info.length==6) {
+	if (info && info.length==7) {
 		var name=info[1];
 		var level=info[2];
 		var URL=info[3];
 		var emojiName=info[4];
 		var notes=info[5];
+		var days=info[6]
 		
 		// Confirm correct information
 		say("Just to confirm, I have a new level "+level+" program called "+name+". The URL for this program is <https://darebee.com/programs/"+URL+".html> and the emoji is "+emoji(msg,emojiName)+".",msg.channel);
 		
 		// Record to csv file
-		//fs.appendFileSync(file, '"'+ID+'","'+name+'","'+day+'","'+month+'",""\n');
-		say("I've added that program to my book.",msg.channel);
+		//fs.appendFileSync(file, '"'+name+'","'+level+'","'+URL+'","'+emojiName+'","'+notes+'","'+days+'"\n');
+		say("I've added that program to my workout book.",msg.channel);
 		
 		Import();
 	}
 	else {
 		// Respond to function call and ask for data
-		say('Reminder, you need to add the emoji for the program to Discord first. I need the new program in this format:\n\n**!DBProgram** **"program name"** (plain text) **"level"** (1-5, integers only) **"URL"** (just the page name without the .html extension) **"emoji name"** (do not include the `:`s, must be on this server) **"any notes"** (use "" if no notes).',msg.channel);
+		say('Reminder, you need to add the emoji for the program to Discord first. I need the new program in this format:\n\n**!DBProgram** **"program name"** (plain text) **"level"** (1-5, integers only) **"URL"** (just the page name without the .html extension) **"emoji name"** (do not include the `:`s, must be on this server) **"any notes"** (use "" if no notes) **"days"** (how long the program lasts).',msg.channel);
 	}
 }
 
+// Vote for level of next Darebee program
 module.exports.Level=function(msg,say,ref) {
 	// Darebee Pick Levels
 	say(ref+": What level(s) would you like to be included in the vote for next Darebee program?",msg.channel).then(async (say) => {
@@ -46,6 +49,7 @@ module.exports.Level=function(msg,say,ref) {
 	});
 }
 
+// Vote for next Darebee program
 module.exports.Program=function(msg,say,level,channel,ref) {	
 	var U=["☑️","❶","❷","❸","❹","❺"];
 	var current;
@@ -100,6 +104,42 @@ module.exports.Program=function(msg,say,level,channel,ref) {
 	say(toSay,channel).then(async (say) => {
 		while (emotes.length>0) {
 			await say.react(emotes.shift());
+		}
+	});
+}
+
+// Announce today's workout
+module.exports.Daily=function(program, part, callback) {
+	callback(WorkoutRef+" Beginning our workout! Today's workout: <https://darebee.com/programs/"+program+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)");
+}
+
+// Schedule the workout
+module.exports.Schedule=function(callback, callback2) {
+	// Import data
+	fs.readFile(file, 'utf8', function(err, contents) {
+		var rems
+		if (contents.substr(contents.length-2,contents.length-1)=="\n") {
+			rems=contents.substr(0,contents.length-2).split("\n");
+		}
+		else {
+			rems=contents.split("\n");
+		}
+		for (var a in rems) {
+			rems[a]=rems[a].substr(1,rems[a].length-2).split("\",\"");
+		}
+		Rems=rems;
+		for (var a in Rems) {
+			for (var b=0;Number(Rems[a][4])+b<=Number(Rems[a][5]);b++) {
+				var CronJob = require('cron').CronJob;
+				var now=new Date();
+				var when=new Date(now.getFullYear(), (Number(Rems[a][0])-1), (Number(Rems[a][1])+ b), Number(Rems[a][2]), 0, 0, 0)
+				//for debugging
+				//when.setDate(Number(Rems[a][1])+ b-1); // Set it back a day from actual
+				when.setHours(17,44,0,0); // Set time to (hour, minute, second, mill)
+	if (when > now) {
+		cronjobs.push(new CronJob(when,function(){callback(Rems[a][3],(Number(Rems[a][4])+ b),callback2)},null,true,"America/New_York"));
+	}
+			}
 		}
 	});
 }

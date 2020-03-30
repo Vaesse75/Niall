@@ -1,9 +1,9 @@
 {
 	"name": "Niall",
-	"version": "1.2",
+	"version": "1.2.0",
 	"description": "Habitica Bot",
 	"main": "niall.js",
-	"script": {
+	"scripts": {
 		"start": "node ."
 	},
 	"readmeFilename": "changelog.txt",

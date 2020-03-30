@@ -7,11 +7,12 @@ const Ch = require('./ch.js');
 const Role = require('./role.js');
 const Birthday = require('./bday.js');
 const Darebee = require('./darebee.js');
+var testmode;
 Rems=[];
 cronjobs=[];
 
 // Announce functions
-//var testmode=true; // Comment this line out for normal operations
+//testmode=true; // Comment this line out for normal operations
 chat=function(say,channel) {
 	if (say) {
 		if (!channel) {
@@ -85,10 +86,6 @@ Niall.on('ready', () => {
 		"*Blinks his eyes several times.*"
 	];
 	chat(say[Math.floor(Math.random()*say.length)],onConn);
-	
-	// Function calls
-	workout=require('./workout.js');
-	workout.Schedule(workout.Daily,test);
 });
 
 // Reply to messages
@@ -104,20 +101,23 @@ Niall.on('message', msg => {
 		Birthday.Add(msg,chat);
 	}
 
-	if (input.match(/^!dbprogram/)) {
-		Darebee.Add(msg,chat);
-	}
-	
-	if (input.match(/^!level/)) {
-		Darebee.Level(msg,chat,WorkoutRef);
-	}
-	
-	if (input.match(/^!program ?([1-5]*)/)) {
-		level=input.match(/^!program ?([1-5]*)/);
-		if (level) {
-			level=level[1];
+	// Admin only responses
+	if(msg.member.roles.find("name", "Party Leader")) {
+		if (input.match(/^!dbprogram/)) {
+			Darebee.Add(msg,chat);
 		}
-		Darebee.Program(msg,chat,level,heraldConn,WorkoutRef);
+		
+		if (input.match(/^!level/)) {
+			Darebee.Level(msg,chat,WorkoutRef);
+		}
+		
+		if (input.match(/^!program ?([1-5]*)/)) {
+			level=input.match(/^!program ?([1-5]*)/);
+			if (level) {
+				level=level[1];
+			}
+			Darebee.Program(msg,chat,level,heraldConn,WorkoutRef);
+		}
 	}
 	
 	// Modularized responses
