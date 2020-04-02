@@ -6,7 +6,7 @@ const fs = require('fs');
 const Ch = require('./ch.js');
 const Role = require('./role.js');
 const Birthday = require('./bday.js');
-const Darebee = require('./darebee.js');
+const DB = require('./darebee.js');
 var testmode;
 Rems=[];
 cronjobs=[];
@@ -65,7 +65,6 @@ Niall.on('ready', () => {
 	Ch.set("test","693847888396288090");
 	Ch.set("herald","664889622987538435");
 	Role.set("leader","666316148589068328");
-    Role.set("workout","674677574898548766");
     
     // Define frequently used references
     onConn = Ch.get("inn");
@@ -73,7 +72,6 @@ Niall.on('ready', () => {
 	heraldConn = Ch.get("herald");
 	GuideRef = Ch.ref("guide");
 	QuestRef = Ch.ref("quest");
-	WorkoutRef = Role.ref("workout");
 	LeaderRef = Role.ref("leader");
     
     // Wakeup message
@@ -87,6 +85,7 @@ Niall.on('ready', () => {
 		"*Blinks his eyes several times.*"
 	];
 	chat(say[Math.floor(Math.random()*say.length)],onConn);
+	DB.Schedule(chat);
 });
 
 // Reply to messages
@@ -103,13 +102,9 @@ Niall.on('message', msg => {
 	}
 
 	// Admin only responses
-	if(msg.member.roles.find("name", "Party Leader")) {
+	if (msg.member.roles.has("Party Leader")) {
 		if (input.match(/^!dbprogram/)) {
-			Darebee.Add(msg,chat);
-		}
-		
-		if (input.match(/^!level/)) {
-			Darebee.Level(msg,chat,WorkoutRef);
+			DB.Add(msg,chat);
 		}
 		
 		if (input.match(/^!program ?([1-5]*)/)) {
@@ -117,7 +112,7 @@ Niall.on('message', msg => {
 			if (level) {
 				level=level[1];
 			}
-			Darebee.Program(msg,chat,level,heraldConn,WorkoutRef);
+			//DB.Program(msg,chat,level,heraldConn,WorkoutRef);
 		}
 	}
 	

@@ -1,9 +1,15 @@
 //Set contants and variables
 var fs = require('fs');
-const Usr = require('./user.js');
+const Ch = require('./ch.js');
+const Role = require('./user.js');
 var cronjobs=[];
 var file="/home/Plex/Bot/Niall/darebee.csv";
 var CronJob = require('cron').CronJob;
+Ch.set("darebee","695401715616186429");
+Role.set("darebee","674677574898548766");
+loc = Ch.ref("darebee");
+role = Role.ref("darebee");
+
 
 emoji=function(msg,emojiName) {
 	// Works for server emoji ONLY.  Can NOT find Discord generic emoji.
@@ -22,8 +28,27 @@ parseCSV=function(file,a) {
 	return arr;
 }
 
+getCurrent=function(data) {
+	var current=[];
+	var n=new Date();
+	var c=new Date([2000,1,1]);
+	var date=false;
+
+	// Select current (most recent in past) and voted records
+	for (a in data) {
+		var d=new Date(data[a][data[a].length-1].split(/\D+/).map(Number));
+		if (d <= n && c < d) {
+			current=data[a];
+			c=new Date(current[current.length-1].split(/\D+/).map(Number));
+			date=true;
+		}
+	}
+	if (date) return current;
+	else return false;
+}
+	
 // Add Darebee programs
-module.exports.Add=function(msg,say) {
+Add=function(msg,say) {
 	// Declare variables
 	var input=msg.content;
 	var ID=msg.author.id;
@@ -43,8 +68,6 @@ module.exports.Add=function(msg,say) {
 		// Record to csv file
 		//fs.appendFileSync(file, '"'+name+'","'+level+'","'+URL+'","'+emojiName+'","'+notes+'","'+days+'"\n');
 		say("I've added that program to my workout book.",msg.channel);
-		
-		Import();
 	}
 	else {
 		// Respond to function call and ask for data
@@ -53,9 +76,9 @@ module.exports.Add=function(msg,say) {
 }
 
 // Vote for level of next Darebee program
-module.exports.Level=function(msg,say,ref) {
+Level=function(say) {
 	// Darebee Pick Levels
-	say(ref+": What level(s) would you like to be included in the vote for next Darebee program?",msg.channel).then(async (say) => {
+	say(role+": What level(s) would you like to be included in the vote for next Darebee program?",loc).then(async (say) => {
 		var emojis=["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣"];
 		while (emojis.length>0) {
 			await say.react(emojis.shift());
@@ -64,31 +87,24 @@ module.exports.Level=function(msg,say,ref) {
 }
 
 // Vote for next Darebee program
-module.exports.Program=function(msg,say,level,channel,ref) {	
+Program=function(say,level) {	
 	var U=["☑️","❶","❷","❸","❹","❺"];
 	var current=[];
 	var voted=[];
 	var toSay;
 	var emotes=[];
 	var data=parseCSV(file);
-	var n=new Date();
-	var c=new Date([1980,1,1]);
+	var current=getCurrent(data);
 	
-	console.log(n);
 	// Select current (most recent in past) and voted records
 	for (a in data) {
-		var d=new Date(data[a][data[a].length-1].split(/\D+/).map(Number));
-		if (d <= n && c < d) {
-			current=data[a];
-			c=new Date(current[current.length-1].split(/\D+/).map(Number));
-		}
-		else if (level.includes(data[a][1])) {
+		if (data[a] != current && level.includes(data[a][1])) {
 			voted.push(data[a]);
 		}
 	}
 	
 	// Message build
-	//toSay=ref+": The **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n";
+	toSay=role+", the **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n";
 
 	if (current) {
 		toSay+="\n**Repeat Current Program:**\n☑️ From level "+current[1]+", "+current[0]+": <https://darebee.com/programs/"+current[2]+".html>"+(current[4]!=""?" ("+current[4]+")":"")+".\n*If we repeat, we could all attempt to work to a higher level than we did previously.*\n";
@@ -113,7 +129,7 @@ module.exports.Program=function(msg,say,level,channel,ref) {
 
 	toSay+='Or you can join the "Co-Op Workout" *archieved* Take This challenge <https://habitica.com/challenges/ed1a0476-10e5-4a20-8b3c-6dcd1842d545>.  It will not have the Take This reward gear, but will give you the tasks and never expires.';
 	
-	say(toSay,channel).then(async (say) => {
+	say(toSay,locRef).then(async (say) => {
 		while (emotes.length>0) {
 			await say.react(emotes.shift());
 		}
@@ -121,28 +137,33 @@ module.exports.Program=function(msg,say,level,channel,ref) {
 }
 
 // Announce today's workout
-Daily=function(program, part, callback) {
-	// Data processing
-	var data=fs.readFileSync(file,"utf8");
-	
-	while (data.slice(-1)=="\n") {
-		data=data.slice(0,-1);
+Daily=function(say) {
+	var data=parseCSV(file);
+	var current=getCurrent(data);
+	var currDate=new Date(current[current.length-1].split(/\D+/));
+	var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24));
+	var currPart=30;
+	if (current[5]) {
+		currPart=current[5];
 	}
-	
-	data=data.split("\n");
-	for (a in data) {
-		data[a]=data[a].slice(1,-1).split('","');
-		if (data[a][data[a].length-1] != "") {
-			current=data[a];
+	if (part == (currPart-10)) {
+		Level(say);
+	}
+	if (part<=currPart) {
+		toSay=role+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
+		if (part == currPart) {
+			toSay+="\n\nWe have finished "+current[0]+"! We'll be starting our new program tomorrow!"
 		}
+		say(toSay,loc);
 	}
-	callback(WorkoutRef+" Beginning our workout! Today's workout: <https://darebee.com/programs/"+program+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)");
 }
 
 // Schedule the workout
-Schedule=function() {
-	cronjobs.push(new CronJob('0 0 13 * * *',Daily,null,true,"America/New_York"));
+Schedule=function(say) {
+	cronjobs.push(new CronJob('0 0 13 * * *',()=>{Daily(say)},null,true,"America/New_York"));
 	cronjobs[cronjobs.length-1].start();
 }
 
-Schedule();
+module.exports.Add=Add;
+module.exports.Program=Program;
+module.exports.Schedule=Schedule;
