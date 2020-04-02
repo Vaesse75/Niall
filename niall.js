@@ -74,6 +74,7 @@ Niall.on('ready', () => {
 	GuideRef = Ch.ref("guide");
 	QuestRef = Ch.ref("quest");
 	WorkoutRef = Role.ref("workout");
+	LeaderRef = Role.ref("leader");
     
     // Wakeup message
     var say=[
@@ -129,7 +130,7 @@ Niall.on('message', msg => {
 
 // New member greeting
 Niall.on('guildMemberAdd', member => {
-    chat("Welcome to the party, "+Mbr(member,0)+"! If you're new to Habitica, please check out "+GuideRef+".\n\nTo see what I can help you with, type `!help`.");
+    chat("Welcome to the party, "+Mbr(member,0)+"! If you're new to Habitica, please check out "+GuideRef+". Until the "+LeaderRef+" has verified you're in the party, you'll not have permission to talk... sorry about that, but this is supposed to be a private area for the party.\n\nOnce you've been vetted, to see what I can help you with, type `!help`.");
 });
 
 Niall.login(auth.token);
