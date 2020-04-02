@@ -1,11 +1,25 @@
 //Set contants and variables
 var fs = require('fs');
 const Usr = require('./user.js');
+var cronjobs=[];
 var file="/home/Plex/Bot/Niall/darebee.csv";
+var CronJob = require('cron').CronJob;
 
 emoji=function(msg,emojiName) {
 	// Works for server emoji ONLY.  Can NOT find Discord generic emoji.
 	return msg.guild.emojis.find(emoji => emoji.name === emojiName);
+}
+
+parseCSV=function(file,a) {
+	var contents=fs.readFileSync(file, 'utf8');
+	while (contents.slice(-1)=="\n") contents=contents.slice(0,-1);
+	arr=contents.split("\n").map((line)=>{return line.slice(1,-1).split('","');});
+	if (a) {
+		aarr=[];
+		arr.forEach((line)=>{var key=line.shift();aarr[key]=line.length==1?line[0]:line;});
+		arr=aarr;
+	}
+	return arr;
 }
 
 // Add Darebee programs
@@ -52,23 +66,21 @@ module.exports.Level=function(msg,say,ref) {
 // Vote for next Darebee program
 module.exports.Program=function(msg,say,level,channel,ref) {	
 	var U=["☑️","❶","❷","❸","❹","❺"];
-	var current;
+	var current=[];
 	var voted=[];
 	var toSay;
 	var emotes=[];
+	var data=parseCSV(file);
+	var n=new Date();
+	var c=new Date([1980,1,1]);
 	
-	// Data processing
-	var data=fs.readFileSync(file,"utf8");
-	
-	while (data.slice(-1)=="\n") {
-		data=data.slice(0,-1);
-	}
-
-	data=data.split("\n");
+	console.log(n);
+	// Select current (most recent in past) and voted records
 	for (a in data) {
-		data[a]=data[a].slice(1,-1).split('","');
-		if (data[a][data[a].length-1] != "") {
+		var d=new Date(data[a][data[a].length-1].split(/\D+/).map(Number));
+		if (d <= n && c < d) {
 			current=data[a];
+			c=new Date(current[current.length-1].split(/\D+/).map(Number));
 		}
 		else if (level.includes(data[a][1])) {
 			voted.push(data[a]);
@@ -76,7 +88,7 @@ module.exports.Program=function(msg,say,level,channel,ref) {
 	}
 	
 	// Message build
-	toSay=ref+": The **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n";
+	//toSay=ref+": The **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n";
 
 	if (current) {
 		toSay+="\n**Repeat Current Program:**\n☑️ From level "+current[1]+", "+current[0]+": <https://darebee.com/programs/"+current[2]+".html>"+(current[4]!=""?" ("+current[4]+")":"")+".\n*If we repeat, we could all attempt to work to a higher level than we did previously.*\n";
@@ -109,37 +121,28 @@ module.exports.Program=function(msg,say,level,channel,ref) {
 }
 
 // Announce today's workout
-module.exports.Daily=function(program, part, callback) {
+Daily=function(program, part, callback) {
+	// Data processing
+	var data=fs.readFileSync(file,"utf8");
+	
+	while (data.slice(-1)=="\n") {
+		data=data.slice(0,-1);
+	}
+	
+	data=data.split("\n");
+	for (a in data) {
+		data[a]=data[a].slice(1,-1).split('","');
+		if (data[a][data[a].length-1] != "") {
+			current=data[a];
+		}
+	}
 	callback(WorkoutRef+" Beginning our workout! Today's workout: <https://darebee.com/programs/"+program+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)");
 }
 
 // Schedule the workout
-module.exports.Schedule=function(callback, callback2) {
-	// Import data
-	fs.readFile(file, 'utf8', function(err, contents) {
-		var rems
-		if (contents.substr(contents.length-2,contents.length-1)=="\n") {
-			rems=contents.substr(0,contents.length-2).split("\n");
-		}
-		else {
-			rems=contents.split("\n");
-		}
-		for (var a in rems) {
-			rems[a]=rems[a].substr(1,rems[a].length-2).split("\",\"");
-		}
-		Rems=rems;
-		for (var a in Rems) {
-			for (var b=0;Number(Rems[a][4])+b<=Number(Rems[a][5]);b++) {
-				var CronJob = require('cron').CronJob;
-				var now=new Date();
-				var when=new Date(now.getFullYear(), (Number(Rems[a][0])-1), (Number(Rems[a][1])+ b), Number(Rems[a][2]), 0, 0, 0)
-				//for debugging
-				//when.setDate(Number(Rems[a][1])+ b-1); // Set it back a day from actual
-				when.setHours(17,44,0,0); // Set time to (hour, minute, second, mill)
-	if (when > now) {
-		cronjobs.push(new CronJob(when,function(){callback(Rems[a][3],(Number(Rems[a][4])+ b),callback2)},null,true,"America/New_York"));
-	}
-			}
-		}
-	});
+Schedule=function() {
+	cronjobs.push(new CronJob('0 0 13 * * *',Daily,null,true,"America/New_York"));
+	cronjobs[cronjobs.length-1].start();
 }
+
+Schedule();
