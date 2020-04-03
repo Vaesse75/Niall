@@ -112,7 +112,7 @@ Niall.on('message', msg => {
 			if (level) {
 				level=level[1];
 			}
-			//DB.Program(msg,chat,level,heraldConn,WorkoutRef);
+			DB.Program(level,chat);
 		}
 	}
 	

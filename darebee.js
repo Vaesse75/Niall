@@ -50,8 +50,8 @@ getCurrent=function(data) {
 // Add Darebee programs
 Add=function(msg,say) {
 	// Declare variables
-	var input=msg.content;
 	var ID=msg.author.id;
+	var input=msg.content;
 	var info=input.match(/^!dbprogram \"(.+)\" \"([1-5])\" \"(.+)\" \"(.+)\" \"(.*)\" \"([1-5]{2})\"/);
 	
 	if (info && info.length==7) {
@@ -77,17 +77,26 @@ Add=function(msg,say) {
 
 // Vote for level of next Darebee program
 Level=function(say) {
+	var data=parseCSV(file);
+	current=getCurrent(data);
+	
 	// Darebee Pick Levels
-	say(role+": What level(s) would you like to be included in the vote for next Darebee program?",loc).then(async (say) => {
+	say(role+", our current program is level "+current[1]+". What level(s) would you like to be included in the vote for next Darebee program?  (Votes will be tallied in 48 hours.)",loc).then(async (say) => {
 		var emojis=["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣"];
 		while (emojis.length>0) {
-			await say.react(emojis.shift());
+			try {
+				await say.react(emojis.shift());
+			}
+			catch(e) {
+				console.error(e);
+			}
 		}
-	});
+	})
+	.then((e)=> {console.error(e)});
 }
 
 // Vote for next Darebee program
-Program=function(say,level) {	
+Program=function(level,say) {	
 	var U=["☑️","❶","❷","❸","❹","❺"];
 	var current=[];
 	var voted=[];
@@ -102,7 +111,7 @@ Program=function(say,level) {
 			voted.push(data[a]);
 		}
 	}
-	
+
 	// Message build
 	toSay=role+", the **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n";
 
@@ -117,7 +126,7 @@ Program=function(say,level) {
 			for (b in voted) {
 				if (voted[b][1] == a) {
 					toSay+=U[a]+" "+voted[b][0]+": <https://darebee.com/programs/"+voted[b][2]+".html>"+(voted[b][4]!=""?" ("+voted[b][4]+")":"")+"\n";
-					emotes.push(emoji(msg,voted[b][3]));
+					emotes.push(voted[b][3]);
 				}
 			}
 		}
@@ -129,31 +138,58 @@ Program=function(say,level) {
 
 	toSay+='Or you can join the "Co-Op Workout" *archieved* Take This challenge <https://habitica.com/challenges/ed1a0476-10e5-4a20-8b3c-6dcd1842d545>.  It will not have the Take This reward gear, but will give you the tasks and never expires.';
 	
-	say(toSay,locRef).then(async (say) => {
+	say(toSay,loc).then(async (say) => {
 		while (emotes.length>0) {
-			await say.react(emotes.shift());
+			try {
+				await say.react(emotes.shift());
+			}
+			catch(e) {
+				console.error(e);
+			}
 		}
-	});
+	})
+	.then((e)=> {console.error(e)});
 }
 
-// Announce today's workout
+Tie=function(ties,say) {
+	// Take the winning programs and restart vote among only them.
+}
+
+// Daily workout functions
 Daily=function(say) {
 	var data=parseCSV(file);
 	var current=getCurrent(data);
 	var currDate=new Date(current[current.length-1].split(/\D+/));
 	var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24));
 	var currPart=30;
+	
 	if (current[5]) {
 		currPart=current[5];
 	}
-	if (part == (currPart-10)) {
-		Level(say);
-	}
 	if (part<=currPart) {
 		toSay=role+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
-		if (part == currPart) {
-			toSay+="\n\nWe have finished "+current[0]+"! We'll be starting our new program tomorrow!"
-		}
+		switch(part-currPart) {
+			case 10: 
+				Level(say);
+				break;
+			case 8: 
+				// Read Level votes
+				// level=string of all winning numbers;
+				// Program(level,say);
+				break;
+			case 6: 
+				// Read Program votes, if tie on Program
+				// ties=winning programs;
+				// Tie(ties,say);
+				break;
+			case 4: 
+				// Announce winner and set new current
+				break;
+			case 0: 
+				// Ideally, add info about new program to message
+				toSay+="\n\nWe have finished "+current[0]+"! We'll be starting our new program tomorrow!"
+				break;
+			}
 		say(toSay,loc);
 	}
 }
