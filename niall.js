@@ -73,6 +73,7 @@ Niall.on('ready', () => {
 	GuideRef = Ch.ref("guide");
 	QuestRef = Ch.ref("quest");
 	LeaderRef = Role.ref("leader");
+	Darebee = Ch.ref("darebee");
     
     // Wakeup message
     var say=[
@@ -95,12 +96,47 @@ Niall.on('message', msg => {
 	
 	// Triggered responses
 	if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {
-		chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let everyone know when there's an hour left until the quest is set to start. (Not working yet.)\n**!help** - I'll display this message.",msg.channel);
+		chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let everyone know when there's an hour left until the quest is set to start. (Not working yet.)\n\nROLES\n**!she** - Toggles on and off the She/Her pronoun role.\n**!he** - Toggles on and off the He/Him pronoun role.\n**!they** - Toggles on and off the They/Them pronoun role.\n**!quester** - Toggles on and off the Quester role (get tagged an hour before quests go live).\n**!workout** - Join and get tagged for daily workouts. (In the "+Darebee+".)\n**!healer**/**!warrior**/**!mage**/**!rogue** - Switch to the chosen class.\n\n**!help** - I'll display this message.",msg.channel);
 	}
 	if (input.match(/^!bday/)) {
 		Birthday.Add(msg,chat);
 	}
+	
+	//Pronoun Roles
+	if (input.match(/^!she$/)||input.match(/^!her$/)) {
+		Role.Toggle(msg,"668111455475859488",chat);
+	}
+	if (input.match(/^!he$/)||input.match(/^!him$/)) {
+		Role.Toggle(msg,"668111419262238750",chat);
+	}
 
+	if (input.match(/^!they$/)||input.match(/^!them$/)) {
+		Role.Toggle(msg,"668111380913717272",chat);
+	}
+	
+	//Other Roles
+	if (input.match(/^!quester$/)) {
+		Role.Toggle(msg,"693612089134153829",chat);
+	}
+	
+	if (input.match(/^!workout$/)) {
+		Role.Toggle(msg,"674677574898548766",chat);
+	}
+	
+	//Classes Switch 
+	if (input.match(/^!healer$/)) {
+		Role.Class(msg,"healer",chat);
+	}
+	if (input.match(/^!warrior$/)) {
+		Role.Class(msg,"warrior",chat);
+	}
+	if (input.match(/^!mage$/)) {
+		Role.Class(msg,"mage",chat);
+	}
+	if (input.match(/^!rogue$/)) {
+		Role.Class(msg,"rogue",chat);
+	}
+	
 	// Admin only responses
 	if (msg.member.roles.has("Party Leader")) {
 		if (input.match(/^!dbprogram/)) {

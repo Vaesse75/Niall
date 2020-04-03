@@ -1,13 +1,13 @@
 //Set contants and variables
 var fs = require('fs');
 const Ch = require('./ch.js');
-const Role = require('./user.js');
+const Role = require('./role.js');
 var cronjobs=[];
 var file="/home/Plex/Bot/Niall/darebee.csv";
 var CronJob = require('cron').CronJob;
 Ch.set("darebee","695401715616186429");
 Role.set("darebee","674677574898548766");
-loc = Ch.ref("darebee");
+loc = Ch.get("darebee");
 role = Role.ref("darebee");
 
 

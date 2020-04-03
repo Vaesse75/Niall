@@ -1,5 +1,5 @@
 module.exports=function(input) {
-	if (input.match(/^!quest/)) {
+	if (input.match(/^!quest$/)) {
 		// Pinged function sets a timer for 23 hours
 		/* 
 		 * // On activation:
