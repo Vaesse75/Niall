@@ -77,12 +77,12 @@ Niall.on('ready', () => {
     // Wakeup message
     var say=[
 		"Ahem.",
-		"*Adjusts himself in the corner he's hiding in.*",
 		"*Sits up.*",
 		"*Coughs quietly.*",
 		"*Hums under his breath.*",
+		"*Blinks his eyes several times.*",
 		"*Shakes his head to wake himself up.*",
-		"*Blinks his eyes several times.*"
+		"*Adjusts himself in the corner he's hiding in.*"
 	];
 	chat(say[Math.floor(Math.random()*say.length)],onConn);
 	DB.Schedule(chat);

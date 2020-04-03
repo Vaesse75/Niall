@@ -1,17 +1,21 @@
 module.exports=function(input) {
-	if (input.match(/^h(e(llo)?|i|y)a?.* niall.*?/)) {
+	if (input.match(/h(e(llo)?|i|y)a?.* niall.*?/)) {
 		var say=[
 			"Hiya.",
+			"Heya.",
 			"Hey.",
 			"Hi.",
+			"Hello.",
 			"Huh?"
 		];
 		return (say[Math.floor(Math.random()*say.length)]);
 	}
-	if (input.match(/^(good ?)?(bye|n(ight|ite)).* niall.*?/)) {
+	if (input.match(/(good ?)?(bye|n(ight|ite)).* niall.*?/)) {
 		var say=[
 			"Later.",
 			"Rest well.",
+			"Sleep well.",
+			"Until the morrow.",
 			"G'evening."
 		];
 		return (say[Math.floor(Math.random()*say.length)]);
@@ -20,7 +24,11 @@ module.exports=function(input) {
 		var say=[
 			"What's up?",
 			"Morning.",
-			"Yup."
+			"It is.",
+			"Yup.",
+			"Ugh.",
+			"Again?",
+			"Already?"
 		];
 		return (say[Math.floor(Math.random()*say.length)]);
 	}
@@ -28,6 +36,7 @@ module.exports=function(input) {
 		var say=[
 			"You got it.",
 			"Uh-huh.",
+			"As you wish.",
 			"Sure."
 		];
 		return (say[Math.floor(Math.random()*say.length)]);
