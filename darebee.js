@@ -1,8 +1,6 @@
 //Set contants and variables
 var fs = require('fs');
-var cronjobs=[];
-var file="/home/Plex/Bot/Niall/darebee.csv";
-var CronJob = require('cron').CronJob;
+var file="./darebee.csv";
 var loc;
 var ref;
 
@@ -60,12 +58,6 @@ dateForm=function(date) {
 	form=date.getFullYear().toString().padStart(4,'0')+"-"+(date.getMonth()+1).toString().padStart(2,'0')+"-"+date.getDate().toString().padStart(2,'0')+" at "+date.getHours().toString().padStart(2,'0')+":"+date.getMinutes().toString().padStart(2,'0');
 	
 	return(form);
-}
-
-// Schedule the workout
-Schedule=function(say) {
-	cronjobs.push(new CronJob('0 0 13 * * *',()=>{Daily(say)},null,true,"America/New_York"));
-	cronjobs[cronjobs.length-1].start();
 }
 
 // Daily workout functions
@@ -219,6 +211,7 @@ Tie=function(ties,say) {
 }
 
 module.exports.Setup=Setup;
+module.exports.Daily=Daily;
 module.exports.Add=Add;
 module.exports.Program=Program;
 module.exports.Schedule=Schedule;

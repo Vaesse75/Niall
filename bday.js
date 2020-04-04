@@ -1,6 +1,6 @@
 //Set contants and variables
 var fs = require('fs');
-var file="/home/Plex/Bot/Niall/birthday.csv";
+var file="./birthday.csv";
 Schedule=[];
 
 months=function(num) {

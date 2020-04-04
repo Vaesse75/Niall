@@ -4,10 +4,13 @@ const Niall = bot = new Discord.Client();
 const auth = require('/home/plex/bots/authNiall.json');
 const fs = require('fs');
 const Ch = require('./ch.js');
+const temp = require('./temp.js');
 const Role = require('./role.js');
 const Birthday = require('./bday.js');
 const DB = require('./darebee.js');
+var CronJob = require('cron').CronJob;
 var training;
+var cronjobs=[];
 Rems=[];
 cronjobs=[];
 
@@ -80,6 +83,13 @@ Niall.on('ready', () => {
     
 	DB.Setup(DBConn,DBRef);
 	
+	// Manage the schedule
+	Schedule=function(say) {
+		// Daily workout announce
+		cronjobs.push(new CronJob('0 0 13 * * *',()=>{DB.Daily(say)},null,true,"America/New_York"));
+		cronjobs[cronjobs.length-1].start();
+	}
+	
     // Wakeup message
     var say=[
 		"Ahem.",
@@ -93,7 +103,7 @@ Niall.on('ready', () => {
 	chat(say[Math.floor(Math.random()*say.length)],onConn);
 	
 	// Functions run on start
-	DB.Schedule(chat);
+	Schedule(chat);
 });
 
 // Reply to messages
