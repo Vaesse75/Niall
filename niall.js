@@ -7,19 +7,19 @@ const Ch = require('./ch.js');
 const Role = require('./role.js');
 const Birthday = require('./bday.js');
 const DB = require('./darebee.js');
-var testmode;
+var training;
 Rems=[];
 cronjobs=[];
 
 // Announce functions
-//testmode=true; // Comment this line out for normal operations
+//training=true; // Comment this line out for normal operations
 chat=function(say,channel) {
 	if (say) {
 		if (!channel) {
 			channel=onConn;
-			console.log("No channel sent for: "+say)
+			console.error("No channel sent for: "+say)
 		}
-		if (testmode) {
+		if (training) {
 			channel=testConn;
 		}
 		return channel.send(say);
@@ -32,9 +32,9 @@ richChat=function(say,color,channel) {
 		}
 		if (!channel) {
 			channel=onConn;
-			console.log("No channel sent for (rich): "+say)
+			console.error("No channel sent for (rich): "+say)
 		}
-		if (testmode) {
+		if (training) {
 			channel=testConn;
 		}
 		var embed = new Discord.RichEmbed()
@@ -46,7 +46,7 @@ richChat=function(say,color,channel) {
 test=function(say,channel) {
 	if (!channel) {
 		channel=onconn;
-		console.log("No channel sent for:")
+		console.error("No channel sent for:")
 	}
 	console.log(say);
 }
@@ -64,17 +64,22 @@ Niall.on('ready', () => {
 	Ch.set("quest","665311310581596160");
 	Ch.set("test","693847888396288090");
 	Ch.set("herald","664889622987538435");
+	Ch.set("darebee","695401715616186429");
+	Role.set("darebee","674677574898548766");
 	Role.set("leader","666316148589068328");
     
     // Define frequently used references
     onConn = Ch.get("inn");
 	testConn = Ch.get("test");
 	heraldConn = Ch.get("herald");
+	DBConn = Ch.get("darebee");
 	GuideRef = Ch.ref("guide");
 	QuestRef = Ch.ref("quest");
 	LeaderRef = Role.ref("leader");
-	Darebee = Ch.ref("darebee");
+	DBRef = Role.ref("darebee");
     
+	DB.Setup(DBConn,DBRef);
+	
     // Wakeup message
     var say=[
 		"Ahem.",
@@ -86,6 +91,8 @@ Niall.on('ready', () => {
 		"*Adjusts himself in the corner he's hiding in.*"
 	];
 	chat(say[Math.floor(Math.random()*say.length)],onConn);
+	
+	// Functions run on start
 	DB.Schedule(chat);
 });
 
@@ -96,11 +103,17 @@ Niall.on('message', msg => {
 	
 	// Triggered responses
 	if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {
-		chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let everyone know when there's an hour left until the quest is set to start. (Not working yet.)\n\nROLES\n**!she** - Toggles on and off the She/Her pronoun role.\n**!he** - Toggles on and off the He/Him pronoun role.\n**!they** - Toggles on and off the They/Them pronoun role.\n**!quester** - Toggles on and off the Quester role (get tagged an hour before quests go live).\n**!workout** - Join and get tagged for daily workouts. (In the "+Darebee+".)\n**!healer**/**!warrior**/**!mage**/**!rogue** - Switch to the chosen class.\n\n**!help** - I'll display this message.",msg.channel);
+		chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**time** - I'll tell you what time it is for me.  (Useful when comparing to other times I may give.)\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let our Questers know when there's an hour left until the quest is set to start. (Not working yet.)\n\nROLES\n**!she** - Toggles on and off the She/Her pronoun role.\n**!he** - Toggles on and off the He/Him pronoun role.\n**!they** - Toggles on and off the They/Them pronoun role.\n**!quester** - Toggles on and off the Quester role (get tagged an hour before quests go live).\n**!workout** - Join and get tagged for daily workouts. (In the "+DBConn+".)\n**!healer**/**!warrior**/**!mage**/**!rogue** - Switch to the chosen class. (You choose your class at level 10.)\n\n**!help** - I'll display this message.",msg.channel);
+	}
+	if (input.match(/^!time$/)||input.match(/^!date$/)) {
+		var dt=new Date();
+		var dateForm="The current date is: "+dt.getFullYear().toString().padStart(4,'0')+"-"+(dt.getMonth()+1).toString().padStart(2,'0')+"-"+dt.getDate().toString().padStart(2,'0')+" at "+dt.getHours().toString().padStart(2,'0')+":"+dt.getMinutes().toString().padStart(2,'0');
+		chat(dateForm,msg.channel);
 	}
 	if (input.match(/^!bday/)) {
 		Birthday.Add(msg,chat);
 	}
+	
 	
 	//Pronoun Roles
 	if (input.match(/^!she$/)||input.match(/^!her$/)) {
@@ -138,11 +151,15 @@ Niall.on('message', msg => {
 	}
 	
 	// Admin only responses
-	if (msg.member.roles.has("Party Leader")) {
+	if (msg.member.roles.get("666316148589068328")) {
 		if (input.match(/^!dbprogram/)) {
 			DB.Add(msg,chat);
 		}
 		
+		// Remove once automation complete
+		if (input.match(/^!level$/)) {
+			DB.Level(chat);
+		}
 		if (input.match(/^!program ?([1-5]*)/)) {
 			level=input.match(/^!program ?([1-5]*)/);
 			if (level) {

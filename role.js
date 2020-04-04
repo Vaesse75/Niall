@@ -1,3 +1,5 @@
+var roleObj;
+
 this.get=function(id) {
 	return this[id.toLowerCase()]||id.toLowerCase();
 }
@@ -9,7 +11,9 @@ this.set=function(id,val) {
 }
 
 Toggle=function(msg,role,say) {
-	var roleObj=msg.guild.roles.get(role);
+	if (msg) {
+		roleObj=msg.guild.roles.get(role);
+	}
 	
 	if (!msg.member.roles.has(role)) {
 		// Add the role!

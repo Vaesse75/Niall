@@ -1,21 +1,24 @@
 //Set contants and variables
 var fs = require('fs');
-const Ch = require('./ch.js');
-const Role = require('./role.js');
 var cronjobs=[];
 var file="/home/Plex/Bot/Niall/darebee.csv";
 var CronJob = require('cron').CronJob;
-Ch.set("darebee","695401715616186429");
-Role.set("darebee","674677574898548766");
-loc = Ch.get("darebee");
-role = Role.ref("darebee");
+var loc;
+var ref;
 
+// Grab loc and ref from Niall.
+Setup=function(DBConn,DBRef) {
+	loc=DBConn;
+	ref=DBRef;
+}
 
+// Return emoji from name.
+// Works for server emoji ONLY.  Can NOT find Discord generic emoji.  Use UNICODE cut and paste for generics.
 emoji=function(msg,emojiName) {
-	// Works for server emoji ONLY.  Can NOT find Discord generic emoji.
 	return msg.guild.emojis.find(emoji => emoji.name === emojiName);
 }
 
+// Read CSV file, return array.
 parseCSV=function(file,a) {
 	var contents=fs.readFileSync(file, 'utf8');
 	while (contents.slice(-1)=="\n") contents=contents.slice(0,-1);
@@ -28,6 +31,7 @@ parseCSV=function(file,a) {
 	return arr;
 }
 
+// Figure out what the current program is from workout.csv.
 getCurrent=function(data) {
 	var current=[];
 	var n=new Date();
@@ -45,6 +49,62 @@ getCurrent=function(data) {
 	}
 	if (date) return current;
 	else return false;
+}
+
+// Take date add two days, return date and formatted String.
+dateForm=function(date) {
+	if (!date) {
+		date=new Date()
+	}
+	
+	form=date.getFullYear().toString().padStart(4,'0')+"-"+(date.getMonth()+1).toString().padStart(2,'0')+"-"+date.getDate().toString().padStart(2,'0')+" at "+date.getHours().toString().padStart(2,'0')+":"+date.getMinutes().toString().padStart(2,'0');
+	
+	return(form);
+}
+
+// Schedule the workout
+Schedule=function(say) {
+	cronjobs.push(new CronJob('0 0 13 * * *',()=>{Daily(say)},null,true,"America/New_York"));
+	cronjobs[cronjobs.length-1].start();
+}
+
+// Daily workout functions
+Daily=function(say) {
+	var data=parseCSV(file);
+	var current=getCurrent(data);
+	var currDate=new Date(current[current.length-1].split(/\D+/));
+	var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24));
+	var currPart=30;
+	
+	if (current[5]) {
+		currPart=current[5];
+	}
+	if (part<=currPart) {
+		toSay=ref+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
+		switch(part-currPart) {
+			case 10: 
+				Level(say);
+				break;
+			case 8: 
+				// Read Level votes
+				// level=string of all winning numbers;
+				// Program(level,say);
+				break;
+			case 6: 
+				// Read Program votes, if tie on Program
+				// ties=winning programs;
+				// Tie(ties,say);
+				break;
+			case 4: 
+				// Announce winner and set new current
+				break;
+			case 0: 
+				// Ideally, add info about new program to message
+				toSay+="\n\nWe have finished "+current[0]+"! We'll be starting our new program tomorrow!"
+				break;
+		}
+		say(toSay,loc);
+	}
 }
 	
 // Add Darebee programs
@@ -79,9 +139,13 @@ Add=function(msg,say) {
 Level=function(say) {
 	var data=parseCSV(file);
 	current=getCurrent(data);
+	var tally="in 48 hours";
+	var date=new Date();
+	date.setDate(date.getDate() + 2);
 	
+	tally="on "+dateForm(date);
 	// Darebee Pick Levels
-	say(role+", our current program is level "+current[1]+". What level(s) would you like to be included in the vote for next Darebee program?  (Votes will be tallied in 48 hours.)",loc).then(async (say) => {
+	say(ref+", our current program is "+current[0]+" at level "+current[1]+". What level(s) would you like to be included in the vote for next Darebee program?  Vote for as many as you want, votes will be tallied "+tally+".",loc).then(async (say) => {
 		var emojis=["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣"];
 		while (emojis.length>0) {
 			try {
@@ -92,7 +156,7 @@ Level=function(say) {
 			}
 		}
 	})
-	.then((e)=> {console.error(e)});
+	.catch(console.error);
 }
 
 // Vote for next Darebee program
@@ -113,7 +177,7 @@ Program=function(level,say) {
 	}
 
 	// Message build
-	toSay=role+", the **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n";
+	toSay=ref+", the **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n";
 
 	if (current) {
 		toSay+="\n**Repeat Current Program:**\n☑️ From level "+current[1]+", "+current[0]+": <https://darebee.com/programs/"+current[2]+".html>"+(current[4]!=""?" ("+current[4]+")":"")+".\n*If we repeat, we could all attempt to work to a higher level than we did previously.*\n";
@@ -132,12 +196,11 @@ Program=function(level,say) {
 		}
 	}
 	
-	toSay+="\nRespond below with the associated emoji to vote for your preference (I'll seed one of each).  You can vote for more than one option.  In case of a tie for winner, we'll revote with only the tied options and one vote per person.  (Note: If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)\n\n";
+	// Votes will be tallied on [date] at [time].
+	toSay+="\nRespond below with the associated emoji to vote for your preference (I'll seed one of each).  Vote for as many as you want, votes will be tallied in 48 hours.  In case of a tie for winner, we'll have a run-off vote between the tied options.  (Note: If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)\n\n";
 	
-	toSay+="Meanwhile, Sophie has generously created a challenge for the party that mirrors the Take This challenge.  There will be a gem reward randomly assigned, so please participate!  <https://habitica.com/challenges/2d4ab911-4db9-488c-ba2d-96975b0d3e1b>\n\n";
+	toSay+='*If you are joining us, you can join the "Co-Op Workout" archieved Take This challenge <https://habitica.com/challenges/ed1a0476-10e5-4a20-8b3c-6dcd1842d545>.  It will not earn the Take This reward gear or award gems to the (random) winner, but will give you the tasks and never expires. Meanwhile, Sophie has generously created a challenge for the party that mirrors the Take This challenge.  There will be a gem reward randomly assigned for participation!  <https://habitica.com/challenges/2d4ab911-4db9-488c-ba2d-96975b0d3e1b>*';
 
-	toSay+='Also you can join the "Co-Op Workout" *archieved* Take This challenge <https://habitica.com/challenges/ed1a0476-10e5-4a20-8b3c-6dcd1842d545>.  It will not have the Take This reward gear, but will give you the tasks and never expires.';
-	
 	say(toSay,loc).then(async (say) => {
 		while (emotes.length>0) {
 			try {
@@ -148,58 +211,15 @@ Program=function(level,say) {
 			}
 		}
 	})
-	.then((e)=> {console.error(e)});
+	.catch(console.error);
 }
 
 Tie=function(ties,say) {
 	// Take the winning programs and restart vote among only them.
 }
 
-// Daily workout functions
-Daily=function(say) {
-	var data=parseCSV(file);
-	var current=getCurrent(data);
-	var currDate=new Date(current[current.length-1].split(/\D+/));
-	var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24));
-	var currPart=30;
-	
-	if (current[5]) {
-		currPart=current[5];
-	}
-	if (part<=currPart) {
-		toSay=role+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
-		switch(part-currPart) {
-			case 10: 
-				Level(say);
-				break;
-			case 8: 
-				// Read Level votes
-				// level=string of all winning numbers;
-				// Program(level,say);
-				break;
-			case 6: 
-				// Read Program votes, if tie on Program
-				// ties=winning programs;
-				// Tie(ties,say);
-				break;
-			case 4: 
-				// Announce winner and set new current
-				break;
-			case 0: 
-				// Ideally, add info about new program to message
-				toSay+="\n\nWe have finished "+current[0]+"! We'll be starting our new program tomorrow!"
-				break;
-			}
-		say(toSay,loc);
-	}
-}
-
-// Schedule the workout
-Schedule=function(say) {
-	cronjobs.push(new CronJob('0 0 13 * * *',()=>{Daily(say)},null,true,"America/New_York"));
-	cronjobs[cronjobs.length-1].start();
-}
-
+module.exports.Setup=Setup;
 module.exports.Add=Add;
 module.exports.Program=Program;
 module.exports.Schedule=Schedule;
+module.exports.Level=Level;

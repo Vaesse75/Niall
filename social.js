@@ -1,5 +1,5 @@
 module.exports=function(input) {
-	if (input.match(/h(e(llo)?|i|y)a?.* niall.*?/)) {
+	if (input.match(/^h(e(llo)?|i|y)a?.* niall.*?/)) {
 		var say=[
 			"Hiya.",
 			"Heya.",
