@@ -70,6 +70,9 @@ Mbr=function(mem,leadcap) {
 
 // Initial setup
 Niall.on('ready', () => {
+	// Set Nickname depending on Training status
+	Niall.guilds.get("664197181846061077").members.get("692526000994517102").setNickname(training?"Niall | In Training":"Niall | Village Crier");
+	
 	// Define Ch and Role objects
 	Ch.set("inn","664197181846061080");
 	Ch.set("guide","664199483025915904");
