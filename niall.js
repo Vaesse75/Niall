@@ -15,7 +15,7 @@ Rems=[];
 cronjobs=[];
 
 // Announce functions
-training=true; // Comment this line out for normal operations
+//training=true; // Comment this line out for normal operations
 chat=function(say,chan) {
 	if (say) {
 		if (!chan) {
@@ -97,9 +97,6 @@ Niall.on('ready', () => {
 	// Manage the schedule
     Schedule=function(when,fn,args) {
 		// Daily workout announce
-		console.log(fn);
-		console.log(when);
-		console.log(new Date());
 		cronjobs.push(new CronJob(when,fn(...args),null,true,"America/New_York"));
 		cronjobs[cronjobs.length-1].start();
 	}
@@ -118,7 +115,7 @@ Niall.on('ready', () => {
 	
 	// Functions run on start
 	Schedule('0 0 13 * * *',DB.Daily,[chat]);
-	Quest.Schedule(Schedule,chat,onConn,QuesterRef);
+	Quest.Schedule(chat,onConn,QuesterRef);
 });
 
 // Reply to messages
@@ -128,7 +125,7 @@ Niall.on('message', msg => {
 	
 	// Triggered responses
 	if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {
-		chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**time** - I'll tell you what time it is for me.  (Useful when comparing to other times I may give.)\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let our Questers know when there's an hour left until the quest is set to start. (Not working yet.)\n\nROLES\n**!she** - Toggles on and off the She/Her pronoun role.\n**!he** - Toggles on and off the He/Him pronoun role.\n**!they** - Toggles on and off the They/Them pronoun role.\n**!quester** - Toggles on and off the Quester role (get tagged an hour before quests go live).\n**!workout** - Join and get tagged for daily workouts. (In the "+DBConn+".)\n**!healer**/**!warrior**/**!mage**/**!rogue** - Switch to the chosen class. (You choose your class at level 10.)\n\n**!help** - I'll display this message.",msg.channel);
+		chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**time** - I'll tell you what time it is for me.  (Useful when comparing to other times I may give.)\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let our Questers know when there's an hour left until the quest is set to start.\n\nROLES\n**!she** - Toggles on and off the She/Her pronoun role.\n**!he** - Toggles on and off the He/Him pronoun role.\n**!they** - Toggles on and off the They/Them pronoun role.\n**!quester** - Toggles on and off the Quester role (get tagged an hour before quests go live).\n**!workout** - Join and get tagged for daily workouts. (In the "+DBConn+".)\n**!healer**/**!warrior**/**!mage**/**!rogue** - Switch to the chosen class. (You choose your class at level 10.)\n\n**!help** - I'll display this message.",msg.channel);
 	}
 	if (input.match(/^!time$/)||input.match(/^!date$/)) {
 		var dt=new Date();
@@ -141,7 +138,7 @@ Niall.on('message', msg => {
 	
 	if (input.match(/^!quest$/)) {
 		Quest.Add(msg,chat);
-		Quest.Schedule(Schedule,chat,onConn,QuesterRef);
+		Quest.Schedule(chat,onConn,QuesterRef);
 	}
 	
 	//Pronoun Roles
