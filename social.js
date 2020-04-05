@@ -1,6 +1,7 @@
-module.exports=function(input) {
+module.exports=function(input,say,chan) {
+	var text=[];
 	if (input.match(/^h(e(llo)?|i|y)a?.* niall.*?/)) {
-		var say=[
+		text=[
 			"Hiya.",
 			"Heya.",
 			"Hey.",
@@ -8,20 +9,18 @@ module.exports=function(input) {
 			"Hello.",
 			"Huh?"
 		];
-		return (say[Math.floor(Math.random()*say.length)]);
 	}
 	if (input.match(/(good ?)?(bye|n(ight|ite)).* niall.*?/)) {
-		var say=[
+		text=[
 			"Later.",
 			"Rest well.",
 			"Sleep well.",
 			"Until the morrow.",
 			"G'evening."
 		];
-		return (say[Math.floor(Math.random()*say.length)]);
 	}
 	if (input.match(/morning.* niall.*?/)) {
-		var say=[
+		text=[
 			"What's up?",
 			"Morning.",
 			"It is.",
@@ -30,15 +29,14 @@ module.exports=function(input) {
 			"Again?",
 			"Already?"
 		];
-		return (say[Math.floor(Math.random()*say.length)]);
 	}
 	if (input.match(/thank(s.*| ?you.*) niall.*?/)) {
-		var say=[
+		text=[
 			"You got it.",
 			"Uh-huh.",
 			"As you wish.",
 			"Sure."
 		];
-		return (say[Math.floor(Math.random()*say.length)]);
 	}
+	say(text[Math.floor(Math.random()*say.length)],chan);
 };

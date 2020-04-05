@@ -4,10 +4,10 @@ const Niall = bot = new Discord.Client();
 const auth = require('/home/plex/bots/authNiall.json');
 const fs = require('fs');
 const Ch = require('./ch.js');
-const temp = require('./temp.js');
 const Role = require('./role.js');
 const Birthday = require('./bday.js');
 const DB = require('./darebee.js');
+const Quest = require('./quest.js');
 var CronJob = require('cron').CronJob;
 var training;
 var cronjobs=[];
@@ -15,40 +15,49 @@ Rems=[];
 cronjobs=[];
 
 // Announce functions
-//training=true; // Comment this line out for normal operations
-chat=function(say,channel) {
+training=true; // Comment this line out for normal operations
+chat=function(say,chan) {
 	if (say) {
-		if (!channel) {
-			channel=onConn;
+		if (!chan) {
+			chan=onConn;
 			console.error("No channel sent for: "+say)
 		}
 		if (training) {
-			channel=testConn;
+			chan=testConn;
 		}
-		return channel.send(say);
+		return chan.send(say);
 	};
 }
-richChat=function(say,color,channel) {
+reply=function(say,chan) {
+	if (say) {
+		if (!chan) {
+			chan=onConn;
+			console.error("No channel sent for (reply): "+say)
+		}
+		return chan.send(say);
+	};
+}
+richChat=function(say,chan,color) {
 	if (say) {
 		if (!color) {
 			color='#000000';
 		}
-		if (!channel) {
-			channel=onConn;
+		if (!chan) {
+			chan=onConn;
 			console.error("No channel sent for (rich): "+say)
 		}
 		if (training) {
-			channel=testConn;
+			chan=testConn;
 		}
 		var embed = new Discord.RichEmbed()
 			.setColor(color)
 			.setDescription(say);
-		return channel.send({ embed });
+		return chan.send({ embed });
 	};
 }
-test=function(say,channel) {
-	if (!channel) {
-		channel=onconn;
+test=function(say,chan) {
+	if (!chan) {
+		chan=onconn;
 		console.error("No channel sent for:")
 	}
 	console.log(say);
@@ -70,6 +79,7 @@ Niall.on('ready', () => {
 	Ch.set("darebee","695401715616186429");
 	Role.set("darebee","674677574898548766");
 	Role.set("leader","666316148589068328");
+	Role.set("quester","693612089134153829");
     
     // Define frequently used references
     onConn = Ch.get("inn");
@@ -80,13 +90,17 @@ Niall.on('ready', () => {
 	QuestRef = Ch.ref("quest");
 	LeaderRef = Role.ref("leader");
 	DBRef = Role.ref("darebee");
+	QuesterRef = Role.ref("quester");
     
 	DB.Setup(DBConn,DBRef);
 	
 	// Manage the schedule
-	Schedule=function(say) {
+    Schedule=function(when,fn,args) {
 		// Daily workout announce
-		cronjobs.push(new CronJob('0 0 13 * * *',()=>{DB.Daily(say)},null,true,"America/New_York"));
+		console.log(fn);
+		console.log(when);
+		console.log(new Date());
+		cronjobs.push(new CronJob(when,fn(...args),null,true,"America/New_York"));
 		cronjobs[cronjobs.length-1].start();
 	}
 	
@@ -103,7 +117,8 @@ Niall.on('ready', () => {
 	chat(say[Math.floor(Math.random()*say.length)],onConn);
 	
 	// Functions run on start
-	Schedule(chat);
+	Schedule('0 0 13 * * *',DB.Daily,[chat]);
+	Quest.Schedule(Schedule,chat,onConn,QuesterRef);
 });
 
 // Reply to messages
@@ -124,6 +139,10 @@ Niall.on('message', msg => {
 		Birthday.Add(msg,chat);
 	}
 	
+	if (input.match(/^!quest$/)) {
+		Quest.Add(msg,chat);
+		Quest.Schedule(Schedule,chat,onConn,QuesterRef);
+	}
 	
 	//Pronoun Roles
 	if (input.match(/^!she$/)||input.match(/^!her$/)) {
@@ -180,10 +199,9 @@ Niall.on('message', msg => {
 	}
 	
 	// Modularized responses
-	chat(require('./social.js')(input),msg.channel); // Social responses
-	chat(require('./quest.js')(input),msg.channel); // Quest announcements
-	chat(Birthday.Check(msg.author.id),msg.channel); // Birthday greetings
-	richChat(require('./tips.js')(input),'#ffffcc',msg.channel); // Tips
+	require('./social.js')(input,reply,msg.channel); // Social responses
+	Birthday.Check(msg.author.id,chat,msg.channel); // Birthday greetings
+	require('./tips.js')(input,richChat,msg.channel,'#ffffcc'); // Tips
 });
 
 // New member greeting

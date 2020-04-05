@@ -81,7 +81,7 @@ module.exports.Add=function(msg, say) {
 	}
 }
 
-module.exports.Check=function(ID) {
+module.exports.Check=function(ID,say,chan) {
 	if (ID in Schedule) {
 		var now=new Date();
 		var Sch=Schedule[ID];
@@ -89,11 +89,11 @@ module.exports.Check=function(ID) {
 		// Check for correct date and message from user
 		if (Sch.length == 4 && Number(Sch[3])!=now.getFullYear() && Number(Sch[2])==now.getMonth()+1 && Number(Sch[1])==now.getDate()) {
 			fs.appendFileSync(file, '"'+ID+'","'+Sch[0]+'","'+Sch[1]+'","'+Sch[2]+'","'+now.getFullYear()+'"\n');
-			var say=["It looks like today is your birthday, "+Sch[0]+".  Hope it's wonderful!"];
+			var text=["It looks like today is your birthday, "+Sch[0]+".  Hope it's wonderful!"];
 			
 			Import();
 			
-			return say[Math.floor(Math.random()*say.length)];
+			say(text[Math.floor(Math.random()*say.length)],chan);
 		}
 	}
 }

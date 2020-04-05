@@ -1,5 +1,6 @@
 //Set contants and variables
 var fs = require('fs');
+const temp = require('./temp.js');
 var file="./darebee.csv";
 var loc;
 var ref;
@@ -64,38 +65,40 @@ dateForm=function(date) {
 Daily=function(say) {
 	var data=parseCSV(file);
 	var current=getCurrent(data);
-	var currDate=new Date(current[current.length-1].split(/\D+/));
-	var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24));
-	var currPart=30;
-	
-	if (current[5]) {
-		currPart=current[5];
-	}
-	if (part<=currPart) {
-		toSay=ref+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
-		switch(part-currPart) {
-			case 10: 
-				Level(say);
-				break;
-			case 8: 
-				// Read Level votes
-				// level=string of all winning numbers;
-				// Program(level,say);
-				break;
-			case 6: 
-				// Read Program votes, if tie on Program
-				// ties=winning programs;
-				// Tie(ties,say);
-				break;
-			case 4: 
-				// Announce winner and set new current
-				break;
-			case 0: 
-				// Ideally, add info about new program to message
-				toSay+="\n\nWe have finished "+current[0]+"! We'll be starting our new program tomorrow!"
-				break;
+	if (current) {
+		var currDate=new Date(current[current.length-1].split(/\D+/));
+		var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24));
+		var currPart=30;
+		
+		if (current[5]) {
+			currPart=current[5];
 		}
-		say(toSay,loc);
+		if (part<=currPart) {
+			toSay=ref+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
+			switch(part-currPart) {
+				case 10: 
+					Level(say);
+					break;
+				case 8: 
+					// Read Level votes
+					// level=string of all winning numbers;
+					// Program(level,say);
+					break;
+				case 6: 
+					// Read Program votes, if tie on Program
+					// ties=winning programs;
+					// Tie(ties,say);
+					break;
+				case 4: 
+					// Announce winner and set new current
+					break;
+				case 0: 
+					// Ideally, add info about new program to message
+					toSay+="\n\nWe have finished "+current[0]+"! We'll be starting our new program tomorrow!"
+					break;
+			}
+			say(toSay,loc);
+		}
 	}
 }
 	
