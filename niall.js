@@ -8,11 +8,8 @@ const Role = require('./role.js');
 const Birthday = require('./bday.js');
 const DB = require('./darebee.js');
 const Quest = require('./quest.js');
-var CronJob = require('cron').CronJob;
 var training;
-var cronjobs=[];
 Rems=[];
-cronjobs=[];
 
 // Announce functions
 //training=true; // Comment this line out for normal operations
@@ -95,16 +92,7 @@ Niall.on('ready', () => {
 	DBRef = Role.ref("darebee");
 	QuesterRef = Role.ref("quester");
     
-	DB.Setup(DBConn,DBRef);
-	
-	// Manage the schedule
-    Schedule=function(when,fn,args) {
-		// Daily workout announce
-		cronjobs.push(new CronJob(when,fn(...args),null,true,"America/New_York"));
-		cronjobs[cronjobs.length-1].start();
-	}
-	
-    // Wakeup message
+	// Wakeup message
     var say=[
 		"Ahem.",
 		"*Sits up.*",
@@ -117,7 +105,8 @@ Niall.on('ready', () => {
 	chat(say[Math.floor(Math.random()*say.length)],onConn);
 	
 	// Functions run on start
-	Schedule('0 0 13 * * *',DB.Daily,[chat]);
+	DB.Setup(DBConn,DBRef);
+	DB.Schedule(chat);
 	Quest.Schedule(chat,onConn,QuesterRef);
 });
 

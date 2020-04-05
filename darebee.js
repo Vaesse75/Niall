@@ -2,6 +2,8 @@
 var fs = require('fs');
 const temp = require('./temp.js');
 var file="./darebee.csv";
+var CronJob = require('cron').CronJob;
+var cronjobs=[];
 var loc;
 var ref;
 
@@ -59,6 +61,13 @@ dateForm=function(date) {
 	form=date.getFullYear().toString().padStart(4,'0')+"-"+(date.getMonth()+1).toString().padStart(2,'0')+"-"+date.getDate().toString().padStart(2,'0')+" at "+date.getHours().toString().padStart(2,'0')+":"+date.getMinutes().toString().padStart(2,'0');
 	
 	return(form);
+}
+
+// Manage the schedule
+Schedule=function(say) {
+	// Daily workout announce
+	cronjobs.push(new CronJob('0 5 13 * * *',()=>{Daily(say)},null,true,"America/New_York"));
+	cronjobs[cronjobs.length-1].start();
 }
 
 // Daily workout functions
@@ -194,7 +203,7 @@ Program=function(level,say) {
 	// Votes will be tallied on [date] at [time].
 	toSay+="\nRespond below with the associated emoji to vote for your preference (I'll seed one of each).  Vote for as many as you want, votes will be tallied in 48 hours.  In case of a tie for winner, we'll have a run-off vote between the tied options.  (Note: If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)\n\n";
 	
-	toSay+='*If you are joining us, you can join the "Co-Op Workout" archieved Take This challenge <https://habitica.com/challenges/ed1a0476-10e5-4a20-8b3c-6dcd1842d545>.  It will not earn the Take This reward gear or award gems to the (random) winner, but will give you the tasks and never expires. Meanwhile, Sophie has generously created a challenge for the party that mirrors the Take This challenge.  There will be a gem reward randomly assigned for participation!  <https://habitica.com/challenges/2d4ab911-4db9-488c-ba2d-96975b0d3e1b>*';
+	toSay+='*If you are joining us, you will be effectively doing the "Co-Op Workout" archieved Take This challenge <https://habitica.com/challenges/ed1a0476-10e5-4a20-8b3c-6dcd1842d545>.  It will not earn the Take This reward gear or award gems to the (random) winner as the active Take This challenge does, but will give you the tasks and never expires. Meanwhile, Sophie has generously created a challenge for the party that mirrors the Take This challenge.  There will be a gem reward randomly assigned for participation!  <https://habitica.com/challenges/2d4ab911-4db9-488c-ba2d-96975b0d3e1b>*';
 
 	say(toSay,loc).then(async (say) => {
 		while (emotes.length>0) {
