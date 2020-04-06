@@ -12,7 +12,7 @@ var training;
 Rems=[];
 
 // Announce functions
-//training=true; // Comment this line out for normal operations
+training=true; // Comment this line out for normal operations
 chat=function(say,chan) {
 	if (say) {
 		if (!chan) {
@@ -69,6 +69,8 @@ Mbr=function(mem,leadcap) {
 Niall.on('ready', () => {
 	// Set Nickname depending on Training status
 	Niall.guilds.get("664197181846061077").members.get("692526000994517102").setNickname(training?"Niall | In Training":"Niall | Village Crier");
+	
+	DB.init(Niall);
 	
 	// Define Ch and Role objects
 	Ch.set("inn","664197181846061080");
@@ -188,7 +190,7 @@ Niall.on('message', msg => {
 			if (level) {
 				level=level[1];
 			}
-			DB.Program(level,chat);
+			DB.Program(chat);
 		}
 	}
 	

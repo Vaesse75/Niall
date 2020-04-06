@@ -4,7 +4,7 @@ var quest = temp.get("quest");
 // Announce new quest and add to temp file.
 Add=function(msg,say) {
 	// On activation:
-	say("New quest just posted!  Reminder will be sent to all Questers in 23 hours.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",msg.channel);
+	say(role+", new quest just posted! Another reminder will be sent to all Questers in 23 hours.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",msg.channel);
 	// Calculate now plus 23 hours.  Record to a temp file.
 	var date=new Date();
 	date.setHours(date.getHours() + 23);
@@ -22,7 +22,7 @@ Schedule=function(say,chan,role) {
 }
 
 Announce=function(say,chan,role) {
-	say(role+", new quest will start in an hour.  Last chance to accept.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
+	say(role+", new quest will start in an hour. Last chance to accept.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
 	temp.del("quest");
 }
 

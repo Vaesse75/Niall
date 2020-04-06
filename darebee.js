@@ -6,6 +6,11 @@ var CronJob = require('cron').CronJob;
 var cronjobs=[];
 var loc;
 var ref;
+var client;
+
+init=function(bot) {
+	client=bot;
+}
 
 // Grab loc and ref from Niall.
 Setup=function(DBConn,DBRef) {
@@ -53,64 +58,26 @@ getCurrent=function(data) {
 }
 
 // Take date add two days, return date and formatted String.
-dateForm=function(date) {
+dateForm=function(date,noTime) {
 	if (!date) {
 		date=new Date()
 	}
 	
-	form=date.getFullYear().toString().padStart(4,'0')+"-"+(date.getMonth()+1).toString().padStart(2,'0')+"-"+date.getDate().toString().padStart(2,'0')+" at "+date.getHours().toString().padStart(2,'0')+":"+date.getMinutes().toString().padStart(2,'0');
+	form=date.getFullYear().toString().padStart(4,'0')+"-"+(date.getMonth()+1).toString().padStart(2,'0')+"-"+date.getDate().toString().padStart(2,'0')+noTime?"":" at "+date.getHours().toString().padStart(2,'0')+":"+date.getMinutes().toString().padStart(2,'0');
 	
 	return(form);
 }
 
-// Manage the schedule
-Schedule=function(say) {
-	// Daily workout announce
-	cronjobs.push(new CronJob('0 5 13 * * *',()=>{Daily(say)},null,true,"America/New_York"));
-	cronjobs[cronjobs.length-1].start();
+// Look at message passed and make array of reacts and counts
+countReacts=function(msg) {
+	var reacts=[];
+	
+	for (a of msg.reactions.keys()) {
+		reacts[a]=msg.reactions.get(a).count;
+	}
+	return reacts;
 }
 
-// Daily workout functions
-Daily=function(say) {
-	var data=parseCSV(file);
-	var current=getCurrent(data);
-	if (current) {
-		var currDate=new Date(current[current.length-1].split(/\D+/));
-		var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24));
-		var currPart=30;
-		
-		if (current[5]) {
-			currPart=current[5];
-		}
-		if (part<=currPart) {
-			toSay=ref+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
-			switch(part-currPart) {
-				case 10: 
-					Level(say);
-					break;
-				case 8: 
-					// Read Level votes
-					// level=string of all winning numbers;
-					// Program(level,say);
-					break;
-				case 6: 
-					// Read Program votes, if tie on Program
-					// ties=winning programs;
-					// Tie(ties,say);
-					break;
-				case 4: 
-					// Announce winner and set new current
-					break;
-				case 0: 
-					// Ideally, add info about new program to message
-					toSay+="\n\nWe have finished "+current[0]+"! We'll be starting our new program tomorrow!"
-					break;
-			}
-			say(toSay,loc);
-		}
-	}
-}
-	
 // Add Darebee programs
 Add=function(msg,say) {
 	// Declare variables
@@ -139,6 +106,85 @@ Add=function(msg,say) {
 	}
 }
 
+// Manage the schedule
+Schedule=function(say) {
+	// Daily workout announce
+	cronjobs.push(new CronJob('0 5 13 * * *',()=>{Daily(say)},null,true,"America/New_York"));
+	cronjobs[cronjobs.length-1].start();
+}
+
+// Daily workout functions
+Daily=function(say) {
+	var data=parseCSV(file);
+	var current=getCurrent(data);
+	var winner;
+	
+	if (current) {
+		var currDate=new Date(current[current.length-1].split(/\D+/));
+		var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24));
+		var currPart=30;
+		
+		if (current[5]) {
+			currPart=current[5];
+		}
+		var start=new Date().setDate(currDate.getDate()+currPart+1);
+		if (part<=currPart) {
+			toSay=ref+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
+			switch(part-currPart) {
+				case 10: 
+					Level(say);
+					break;
+				case 8: 
+					Program(say);
+					break;
+				case 6: 
+					var votes=countReacts(temp.get("program"));
+					// Read Program votes, if tie on Program
+					var n=0;
+					if (!votes) {
+						say("I guess you didn't want another program now. Hmm.");
+						break;
+					}
+					for (a in votes) {
+						if (votes[a]>n) {
+							n=votes[a];
+						}
+					}
+					var program=[];
+					for (a in votes) {
+						if (votes[a]==n) {program.push(a);}
+					}
+					if (program.length>1) {
+						Tie(program,say);
+					}
+					else Announce(program,start,say); // Announce winner and set new current
+					break;
+				case 4:
+					if (program=temp.get("tie")) {
+						// Count Tie
+						var votes=countReacts(temp.get("tie"));
+						for (a in votes) {
+							if (votes[a]>n) {
+								n=votes[a];
+							}
+						}
+						var program=[];
+						for (a in votes) {
+							if (votes[a]==n) {program.push(a);}
+						}
+						Announce(program,say); // Announce winner and set new current
+					}
+					break;
+				case 0: 
+					// Ideally, add info about new program to message
+					toSay+="\n\nWe have finished "+current[0]+"! We'll be starting our new program tomorrow!"
+					break;
+			}
+			say(toSay,loc);
+		}
+	}
+}
+
 // Vote for level of next Darebee program
 Level=function(say) {
 	var data=parseCSV(file);
@@ -159,69 +205,132 @@ Level=function(say) {
 				console.error(e);
 			}
 		}
+		temp.set("level",say.id);
 	})
 	.catch(console.error);
 }
 
 // Vote for next Darebee program
-Program=function(level,say) {	
-	var U=["☑️","❶","❷","❸","❹","❺"];
+Program=function(say) {	
 	var current=[];
 	var voted=[];
 	var toSay;
 	var emotes=[];
 	var data=parseCSV(file);
 	var current=getCurrent(data);
+	var votes;
 	
-	// Select current (most recent in past) and voted records
-	for (a in data) {
-		if (data[a] != current && level.includes(data[a][1])) {
-			voted.push(data[a]);
+	fromTemp=temp.get("level");
+	client.channels.get(loc).fetchMessage(fromTemp)
+	.then(countReacts)
+	.then((votes)=>{
+		var n=0;
+		
+		for (a in votes) {
+			if (votes[a]>n) {
+				n=votes[a];
+			}
 		}
-	}
+		var level="";
+		for (a in votes) {
+			if (votes[a]==n) {
+				level+=a;
+			}
+		}
+		return level;
+	})
+	.then((level)=> {
+		for (a in data) {
+			if (data[a] != current && level.includes(data[a][1])) {
+				voted.push(data[a]);
+			}
+		}
 
-	// Message build
-	toSay=ref+", the **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n";
+		// Message build
+		say(ref+", the **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n",loc);
 
-	if (current) {
-		toSay+="\n**Repeat Current Program:**\n☑️ From level "+current[1]+", "+current[0]+": <https://darebee.com/programs/"+current[2]+".html>"+(current[4]!=""?" ("+current[4]+")":"")+".\n*If we repeat, we could all attempt to work to a higher level than we did previously.*\n";
-		emotes.push(U[0]);
-	}
+		if (current) {
+			say("**Repeat Current Program:**\n☑️ From level "+current[1]+", "+current[0]+": <https://darebee.com/programs/"+current[2]+".html>"+(current[4]!=""?" ("+current[4]+")":"")+".\n*If we repeat, we could all attempt to work to a higher level than we did previously.*\n",loc);
+			emotes.push("☑️");
+		}
 
-	for (var a=1;a<6;a++) {
-		if (level.includes(a)) {
-			toSay+="\n**Or we can choose something from level "+a+":**\n";
-			for (b in voted) {
-				if (voted[b][1] == a) {
-					toSay+=U[a]+" "+voted[b][0]+": <https://darebee.com/programs/"+voted[b][2]+".html>"+(voted[b][4]!=""?" ("+voted[b][4]+")":"")+"\n";
-					emotes.push(voted[b][3]);
+		for (var a=1;a<6;a++) {
+			if (level.includes(a)) {
+				toSay="**Or we can choose something from level "+a+":**";
+				for (b in voted) {
+					if (voted[b][1] == a) {
+						toSay+="\n"+voted[b][3]+" "+voted[b][0]+": <https://darebee.com/programs/"+voted[b][2]+".html>"+(voted[b][4]!=""?" ("+voted[b][4]+")":"");
+						emotes.push(voted[b][3]);
+					}
 				}
+				say(toSay,loc);
 			}
 		}
-	}
-	
-	// Votes will be tallied on [date] at [time].
-	toSay+="\nRespond below with the associated emoji to vote for your preference (I'll seed one of each).  Vote for as many as you want, votes will be tallied in 48 hours.  In case of a tie for winner, we'll have a run-off vote between the tied options.  (Note: If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)\n\n";
-	
-	toSay+='*If you are joining us, you will be effectively doing the "Co-Op Workout" archieved Take This challenge <https://habitica.com/challenges/ed1a0476-10e5-4a20-8b3c-6dcd1842d545>.  It will not earn the Take This reward gear or award gems to the (random) winner as the active Take This challenge does, but will give you the tasks and never expires. Meanwhile, Sophie has generously created a challenge for the party that mirrors the Take This challenge.  There will be a gem reward randomly assigned for participation!  <https://habitica.com/challenges/2d4ab911-4db9-488c-ba2d-96975b0d3e1b>*';
-
-	say(toSay,loc).then(async (say) => {
-		while (emotes.length>0) {
-			try {
-				await say.react(emotes.shift());
-			}
-			catch(e) {
-				console.error(e);
-			}
-		}
+		
+		// Votes will be tallied on [date] at [time].
+		say("**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Vote for as many as you want, though Discord only allows 20 different reacts. Votes will be tallied in 48 hours. (Note: If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)",loc)
+		.then(async (say) => {
+			temp.del("level");
+			temp.set("program",say.id);
+		})
 	})
 	.catch(console.error);
 }
 
-Tie=function(ties,say) {
+// Vote among tied programs
+Tie=function(program,say) {
+	for (a in program) {
+		ties=data.filter((check)=>{check[3]==program[a]});
+	}
+
 	// Take the winning programs and restart vote among only them.
+	toSay=ref+", we had a tie! Please vote from the programs listed below.\n\n";
+	
+	for (b in ties) {
+		toSay+=ties[b][3]+" "+ties[b][0]+": <https://darebee.com/programs/"+ties[b][2]+".html>"+(ties[b][4]!=""?" ("+ties[b][4]+")":"")+"\n";
+	}
+	toSay+="\n**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Votes will be tallied in 48 hours. A tie on this vote and I'll randomly chose one of those winners.";
+	
+	say(toSay,loc).then(async (say) => {
+		temp.del("program");
+		temp.set("tie",say.id);
+	})
+	.catch(console.error);
 }
 
+// Announce winner and set new current
+Announce=function(program,start,say) {
+	if (program.length>1) {
+		program=program[Math.floor(Math.random()*say.length)];
+	}
+	
+	[winner]=data.filter((check)=>{check[3]==program});
+	
+	toSay=ref+", our new program is:\n"+winner[3]+" "+winner[0]+": <https://darebee.com/programs/"+winner[2]+".html>"+(winner[4]!=""?" ("+winner[4]+")":"")+"\n\n";
+	
+	toSay+="We'll be starting it on "+dateForm(start,true)+".";
+	
+	for (a of data) {
+		if (data[a]==winner) {
+			data[a][data[a].length-1]=dateForm(start,true);
+		}
+	}
+	
+	arr=[];
+	for (var a in data) {
+		arr.push(`"`+data[a].join('","')+'"');
+	}
+	temp=arr.join("\n")+"\n";
+	
+	fs.writeFileSync(file, temp);
+	
+	say(toSay,loc).then(async (say) => {
+		temp.del("tie");
+	})
+	.catch(console.error);
+}
+
+module.exports.init=init;
 module.exports.Setup=Setup;
 module.exports.Daily=Daily;
 module.exports.Add=Add;
