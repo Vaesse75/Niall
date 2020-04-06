@@ -2,18 +2,13 @@
 var fs = require('fs');
 const temp = require('./temp.js');
 var file="./darebee.csv";
-var CronJob = require('cron').CronJob;
-var cronjobs=[];
 var loc;
 var ref;
 var client;
 
-init=function(bot) {
-	client=bot;
-}
-
 // Grab loc and ref from Niall.
-Setup=function(DBConn,DBRef) {
+Setup=function(bot,DBConn,DBRef) {
+	client=bot;
 	loc=DBConn;
 	ref=DBRef;
 }
@@ -106,11 +101,17 @@ Add=function(msg,say) {
 	}
 }
 
-// Manage the schedule
+// Schedule Daily to run at next 13:00
 Schedule=function(say) {
-	// Daily workout announce
-	cronjobs.push(new CronJob('0 5 13 * * *',()=>{Daily(say)},null,true,"America/New_York"));
-	cronjobs[cronjobs.length-1].start();
+	var now=new Date();
+	var when=new Date();
+	
+	when.setHours(13,0,0,0);
+	if (now>when) {
+		when.setDate(when.getDate()+1);
+	}
+	
+	setTimeout(()=>{Daily(say)},when-now);
 }
 
 // Daily workout functions
@@ -139,7 +140,6 @@ Daily=function(say) {
 					break;
 				case 6: 
 					var votes=countReacts(temp.get("program"));
-					// Read Program votes, if tie on Program
 					var n=0;
 					if (!votes) {
 						say("I guess you didn't want another program now. Hmm.");
@@ -161,7 +161,6 @@ Daily=function(say) {
 					break;
 				case 4:
 					if (program=temp.get("tie")) {
-						// Count Tie
 						var votes=countReacts(temp.get("tie"));
 						for (a in votes) {
 							if (votes[a]>n) {
@@ -177,10 +176,11 @@ Daily=function(say) {
 					break;
 				case 0: 
 					// Ideally, add info about new program to message
-					toSay+="\n\nWe have finished "+current[0]+"! We'll be starting our new program tomorrow!"
+					toSay+="\n\nWe have finished "+current[0]+"!"
 					break;
 			}
 			say(toSay,loc);
+			Schedule(say);
 		}
 	}
 }
@@ -330,7 +330,6 @@ Announce=function(program,start,say) {
 	.catch(console.error);
 }
 
-module.exports.init=init;
 module.exports.Setup=Setup;
 module.exports.Daily=Daily;
 module.exports.Add=Add;
