@@ -2,7 +2,7 @@ const temp = require('./temp.js');
 var quest = temp.get("quest");
 
 // Announce new quest and add to temp file.
-Add=function(msg,say) {
+Add=function(msg,say,role) {
 	// On activation:
 	say(role+", new quest just posted! Another reminder will be sent to all Questers in 23 hours.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",msg.channel);
 	// Calculate now plus 23 hours.  Record to a temp file.
@@ -15,7 +15,7 @@ Add=function(msg,say) {
 // If temp file exists, read it and return schedule info.
 Schedule=function(say,chan,role) {
 	if (quest) {
-		now=new Date();
+		var now=new Date();
 		var when=new Date(Number(quest));
 		setTimeout(()=>{Announce(say,chan,role)},when-now);
 	}
