@@ -5,6 +5,7 @@ var file="./darebee.csv";
 var loc;
 var ref;
 var client;
+var time;
 
 // Grab loc and ref from Niall.
 Setup=function(bot,DBConn,DBRef) {
@@ -111,7 +112,7 @@ Schedule=function(say) {
 		when.setDate(when.getDate()+1);
 	}
 	
-	setTimeout(()=>{Daily(say)},when-now);
+	time=setTimeout(()=>{Daily(say)},when-now);
 }
 
 // Daily workout functions
@@ -180,7 +181,7 @@ Daily=function(say) {
 					break;
 			}
 			say(toSay,loc);
-			Schedule(say);
+			time=setTimeout(()=>Schedule(say),50000);
 		}
 	}
 }

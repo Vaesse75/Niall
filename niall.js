@@ -131,7 +131,6 @@ Niall.on('message', msg => {
 	
 	if (input.match(/^!quest$/)) {
 		Quest.Add(msg,chat,QuesterRef);
-		Quest.Schedule(chat,onConn,QuesterRef);
 	}
 	
 	//Pronoun Roles
