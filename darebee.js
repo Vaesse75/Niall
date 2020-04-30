@@ -191,10 +191,11 @@ Level=function(say) {
 	var data=parseCSV(file);
 	current=getCurrent(data);
 	var tally="in 48 hours";
-	var date=new Date();
-	date.setDate(date.getDate() + 2);
+	var date=new Date().setDate(date.getDate() + 2);
 	
-	tally="on "+dateForm(date);
+	if (date) {
+		tally="on "+dateForm(date);
+	}
 	// Darebee Pick Levels
 	say(ref+", our current program is "+current[0]+" at level "+current[1]+". What level(s) would you like to be included in the vote for next Darebee program?  Vote for as many as you want, votes will be tallied "+tally+".",loc).then(async (say) => {
 		var emojis=["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣"];
@@ -222,60 +223,67 @@ Program=function(say) {
 	var votes;
 	
 	fromTemp=temp.get("level");
-	client.channels.get(loc).fetchMessage(fromTemp)
-	.then(countReacts)
-	.then((votes)=>{
-		var n=0;
-		
-		for (a in votes) {
-			if (votes[a]>n) {
-				n=votes[a];
-			}
-		}
-		var level="";
-		for (a in votes) {
-			if (votes[a]==n) {
-				level+=a;
-			}
-		}
-		return level;
-	})
-	.then((level)=> {
-		for (a in data) {
-			if (data[a] != current && level.includes(data[a][1])) {
-				voted.push(data[a]);
-			}
-		}
-
-		// Message build
-		say(ref+", the **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n",loc);
-
-		if (current) {
-			say("**Repeat Current Program:**\n☑️ From level "+current[1]+", "+current[0]+": <https://darebee.com/programs/"+current[2]+".html>"+(current[4]!=""?" ("+current[4]+")":"")+".\n*If we repeat, we could all attempt to work to a higher level than we did previously.*\n",loc);
-			emotes.push("☑️");
-		}
-
-		for (var a=1;a<6;a++) {
-			if (level.includes(a)) {
-				toSay="**Or we can choose something from level "+a+":**";
-				for (b in voted) {
-					if (voted[b][1] == a) {
-						toSay+="\n"+voted[b][3]+" "+voted[b][0]+": <https://darebee.com/programs/"+voted[b][2]+".html>"+(voted[b][4]!=""?" ("+voted[b][4]+")":"");
-						emotes.push(voted[b][3]);
+	client.channels.forEach(chan=>{
+		if (chan.type==="text"&&(chan.name==="training-yard"||chan.name==="courtyard")) {
+			try {
+				chan.fetchMessage(fromTemp)
+				.then(countReacts)
+				.then((votes)=>{
+					var n=0;
+					
+					for (a in votes) {
+						if (votes[a]>n) {
+							n=votes[a];
+						}
 					}
-				}
-				say(toSay,loc);
+					var level="";
+					for (a in votes) {
+						if (votes[a]==n) {
+							level+=a;
+						}
+					}
+					return level;
+				})
+				.then((level)=> {
+					for (a in data) {
+						if (data[a] != current && level.includes(data[a][1])) {
+							voted.push(data[a]);
+						}
+					}
+
+					// Message build
+					say(ref+", the **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n",loc);
+
+					if (current) {
+						say("**Repeat Current Program:**\n☑️ From level "+current[1]+", "+current[0]+": <https://darebee.com/programs/"+current[2]+".html>"+(current[4]!=""?" ("+current[4]+")":"")+".\n*If we repeat, we could all attempt to work to a higher level than we did previously.*\n",loc);
+						emotes.push("☑️");
+					}
+
+					for (var a=1;a<6;a++) {
+						if (level.includes(a)) {
+							toSay="**Or we can choose something from level "+a+":**";
+							for (b in voted) {
+								if (voted[b][1] == a) {
+									toSay+="\n"+voted[b][3]+" "+voted[b][0]+": <https://darebee.com/programs/"+voted[b][2]+".html>"+(voted[b][4]!=""?" ("+voted[b][4]+")":"");
+									emotes.push(voted[b][3]);
+								}
+							}
+							say(toSay,loc);
+						}
+					}
+					
+					// Votes will be tallied on [date] at [time].
+					say("**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Vote for as many as you want, though Discord only allows 20 different reacts. Votes will be tallied in 48 hours. (Note: If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)",loc)
+					.then(async (say) => {
+						temp.del("level");
+						temp.set("program",say.id);
+					})
+				})
+				.catch(console.error);
 			}
+			catch(e) {}
 		}
-		
-		// Votes will be tallied on [date] at [time].
-		say("**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Vote for as many as you want, though Discord only allows 20 different reacts. Votes will be tallied in 48 hours. (Note: If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)",loc)
-		.then(async (say) => {
-			temp.del("level");
-			temp.set("program",say.id);
-		})
 	})
-	.catch(console.error);
 }
 
 // Vote among tied programs

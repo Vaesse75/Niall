@@ -182,12 +182,14 @@ Niall.on('message', msg => {
 		if (input.match(/^!level$/)) {
 			DB.Level(chat);
 		}
-		if (input.match(/^!program ?([1-5]*)/)) {
-			level=input.match(/^!program ?([1-5]*)/);
-			if (level) {
-				level=level[1];
-			}
+		if (input.match(/^!program$/)) {
 			DB.Program(chat);
+		}
+		if (input.match(/^!tie$/)) {
+			DB.Tie(chat);
+		}
+		if (input.match(/^!lannounce$/)) {
+			DB.Announce(chat);
 		}
 	}
 	
