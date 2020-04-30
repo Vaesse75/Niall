@@ -12,7 +12,7 @@ var training;
 Rems=[];
 
 // Announce functions
-//training=true; // Comment this line out for normal operations
+training=true; // Comment this line out for normal operations
 chat=function(say,chan) {
 	if (say) {
 		if (!chan) {
@@ -113,90 +113,89 @@ Niall.on('ready', () => {
 
 // Reply to messages
 Niall.on('message', msg => {
-	// Respond to any capitalization
-    var input=msg.content.toLowerCase();
-	
-	// Triggered responses
-	if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {
-		chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**time** - I'll tell you what time it is for me.  (Useful when comparing to other times I may give.)\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let our Questers know when there's an hour left until the quest is set to start.\n\nROLES\n**!she** - Toggles on and off the She/Her pronoun role.\n**!he** - Toggles on and off the He/Him pronoun role.\n**!they** - Toggles on and off the They/Them pronoun role.\n**!quester** - Toggles on and off the Quester role (get tagged an hour before quests go live).\n**!workout** - Toggle participation and tagging for daily workouts. (In the "+DBConn+".)\n**!spectator** - Toggles ability to observe the "+testRef+".  (You may get extra wrong pings with it on.)\n**!healer**/**!warrior**/**!mage**/**!rogue** - Switch to the chosen class. (You choose your class at level 10.)\n\n**!help** - I'll display this message.",msg.channel);
-	}
-	if (input.match(/^!time$/)||input.match(/^!date$/)) {
-		var dt=new Date();
-		var dateForm="The current date is: "+dt.getFullYear().toString().padStart(4,'0')+"-"+(dt.getMonth()+1).toString().padStart(2,'0')+"-"+dt.getDate().toString().padStart(2,'0')+" at "+dt.getHours().toString().padStart(2,'0')+":"+dt.getMinutes().toString().padStart(2,'0');
-		chat(dateForm,msg.channel);
-	}
-	if (input.match(/^!bday/)) {
-		Birthday.Add(msg,chat);
-	}
-	
-	if (input.match(/^!quest$/)) {
-		Quest.Add(msg,chat,QuesterRef);
-	}
-	
-	//Pronoun Roles
-	if (input.match(/^!she$/)||input.match(/^!her$/)) {
-		Role.Toggle(msg,"668111455475859488",chat);
-	}
-	if (input.match(/^!he$/)||input.match(/^!him$/)) {
-		Role.Toggle(msg,"668111419262238750",chat);
-	}
-
-	if (input.match(/^!they$/)||input.match(/^!them$/)) {
-		Role.Toggle(msg,"668111380913717272",chat);
-	}
-	
-	//Other Roles
-	if (input.match(/^!quester$/)) {
-		Role.Toggle(msg,"693612089134153829",chat);
-	}
-	
-	if (input.match(/^!workout$/)) {
-		Role.Toggle(msg,"674677574898548766",chat);
-	}
-	
-	if (input.match(/^!spectator$/)||input.match(/^!bot$/)) {
-		Role.Toggle(msg,"696409841538695278",chat);
-	}
-	
-	//Classes Switch 
-	if (input.match(/^!healer$/)) {
-		Role.Class(msg,"healer",chat);
-	}
-	if (input.match(/^!warrior$/)) {
-		Role.Class(msg,"warrior",chat);
-	}
-	if (input.match(/^!mage$/)) {
-		Role.Class(msg,"mage",chat);
-	}
-	if (input.match(/^!rogue$/)) {
-		Role.Class(msg,"rogue",chat);
-	}
-	
-	// Admin only responses
-	if (msg.member.roles.get("666316148589068328")) {
-		if (input.match(/^!dbprogram/)) {
-			DB.Add(msg,chat);
+	if (bot.user.id!==msg.author.id) {
+		// Respond to any capitalization
+		var input=msg.content.toLowerCase();
+		
+		// Triggered responses
+		if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {
+			chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**time** - I'll tell you what time it is for me.  (Useful when comparing to other times I may give.)\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let our Questers know when there's an hour left until the quest is set to start.\n\nROLES\n**!she** - Toggles on and off the She/Her pronoun role.\n**!he** - Toggles on and off the He/Him pronoun role.\n**!they** - Toggles on and off the They/Them pronoun role.\n**!quester** - Toggles on and off the Quester role (get tagged an hour before quests go live).\n**!workout** - Toggle participation and tagging for daily workouts. (In the "+DBConn+".)\n**!spectator** - Toggles ability to observe the "+testRef+".  (You may get extra wrong pings with it on.)\n**!healer**/**!warrior**/**!mage**/**!rogue** - Switch to the chosen class. (You choose your class at level 10.)\n\n**!help** - I'll display this message.",msg.channel);
+		}
+		if (input.match(/^!time$/)||input.match(/^!date$/)) {
+			var dt=new Date();
+			var dateForm="The current date is: "+dt.getFullYear().toString().padStart(4,'0')+"-"+(dt.getMonth()+1).toString().padStart(2,'0')+"-"+dt.getDate().toString().padStart(2,'0')+" at "+dt.getHours().toString().padStart(2,'0')+":"+dt.getMinutes().toString().padStart(2,'0');
+			chat(dateForm,msg.channel);
+		}
+		if (input.match(/^!bday/)) {
+			Birthday.Add(msg,chat);
 		}
 		
-		// Remove once automation complete
-		if (input.match(/^!level$/)) {
-			DB.Level(chat);
+		if (input.match(/^!quest$/)) {
+			Quest.Add(chat,msg.channel,QuesterRef);
 		}
-		if (input.match(/^!program$/)) {
-			DB.Program(chat);
+		
+		//Pronoun Roles
+		if (input.match(/^!she$/)||input.match(/^!her$/)) {
+			Role.Toggle(msg,"668111455475859488",chat);
 		}
-		if (input.match(/^!tie$/)) {
-			DB.Tie(chat);
+		if (input.match(/^!he$/)||input.match(/^!him$/)) {
+			Role.Toggle(msg,"668111419262238750",chat);
 		}
-		if (input.match(/^!lannounce$/)) {
-			DB.Announce(chat);
+
+		if (input.match(/^!they$/)||input.match(/^!them$/)) {
+			Role.Toggle(msg,"668111380913717272",chat);
 		}
+		
+		//Other Roles
+		if (input.match(/^!quester$/)) {
+			Role.Toggle(msg,"693612089134153829",chat);
+		}
+		
+		if (input.match(/^!workout$/)) {
+			Role.Toggle(msg,"674677574898548766",chat);
+		}
+		
+		if (input.match(/^!spectator$/)||input.match(/^!bot$/)) {
+			Role.Toggle(msg,"696409841538695278",chat);
+		}
+		
+		//Classes Switch 
+		if (input.match(/^!healer$/)) {
+			Role.Class(msg,"healer",chat);
+		}
+		if (input.match(/^!warrior$/)) {
+			Role.Class(msg,"warrior",chat);
+		}
+		if (input.match(/^!mage$/)) {
+			Role.Class(msg,"mage",chat);
+		}
+		if (input.match(/^!rogue$/)) {
+			Role.Class(msg,"rogue",chat);
+		}
+		
+		// Admin only responses
+		if (msg.member.roles.get("666316148589068328")) {
+			if (input.match(/^!dbprogram/)) {
+				DB.Add(msg,chat);
+			}
+			
+			// Remove once automation complete
+			if (input.match(/^!level$/)) {
+				DB.Level(chat);
+			}
+			if (input.match(/^!program$/)) {
+				DB.Program(chat);
+			}
+			if (input.match(/^!count$/)) {
+				DB.Count(chat);
+			}
+		}
+		
+		// Modularized responses
+		require('./social.js')(input,reply,msg.channel); // Social responses
+		Birthday.Check(msg.author.id,chat,msg.channel); // Birthday greetings
+		require('./tips.js')(input,richChat,msg.channel,'#ffffcc'); // Tips
 	}
-	
-	// Modularized responses
-	require('./social.js')(input,reply,msg.channel); // Social responses
-	Birthday.Check(msg.author.id,chat,msg.channel); // Birthday greetings
-	require('./tips.js')(input,richChat,msg.channel,'#ffffcc'); // Tips
 });
 
 // New member greeting
