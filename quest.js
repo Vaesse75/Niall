@@ -30,12 +30,10 @@ Schedule=function(say,chan,role) {
 }
 
 Announce=function(say,chan,role) {
-	console.log("Quest before announce: "+quest);
 	say(role+", new quest will start in an hour. Last chance to go to <http://www.habitica.com> to accept.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
 	
 	temp.del("quest");
 	quest=temp.get("quest");
-	console.log("Quest after announce: "+quest);
 }
 
 module.exports.Add=Add;

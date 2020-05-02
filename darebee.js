@@ -44,6 +44,25 @@ getCurrent=function(data) {
 	else return false;
 }
 
+getNext=function(data) {
+	var next=[];
+	var n=new Date();
+	var s=new Date([9999,1,1]);
+	var date=false;
+	
+	// Select next (most recent in past) and voted records
+	for (a in data) {
+		var d=new Date(data[a][data[a].length-1].split(/\D+/).map(Number));
+		if (d > n && s > d) {
+			next=data[a];
+			s=new Date(next[next.length-1].split(/\D+/).map(Number));
+			date=true;
+		}
+	}
+	if (date) return next;
+	else return false;
+}
+
 // Take date add two days, return date and formatted String.
 dateForm=function(date,noTime) {
     if (!date) {
@@ -52,7 +71,7 @@ dateForm=function(date,noTime) {
 	else {
         date=new Date(date);
     }
-	return(date.getFullYear().toString().padStart(4,'0')+"-"+(date.getMonth()+1).toString().padStart(2,'0')+"-"+date.getDate().toString().padStart(2,'0')+(noTime?"":" at "+date.getHours().toString().padStart(2,'0')+":"+date.getMinutes().toString().padStart(2,'0')" eastern"));
+	return(date.getFullYear().toString().padStart(4,'0')+"-"+(date.getMonth()+1).toString().padStart(2,'0')+"-"+date.getDate().toString().padStart(2,'0')+(noTime?"":" at "+date.getHours().toString().padStart(2,'0')+":"+date.getMinutes().toString().padStart(2,'0')+" eastern"));
 }
 
 // Look at message passed and make array of reacts and counts
@@ -108,7 +127,8 @@ Schedule=function(say) {
 	var now=new Date();
 	var when=new Date();
 	
-	when.setHours(13,0,0,0);
+	//when.setHours(19,40,0,0); // Use to adjust the shout time when training
+	when.setHours(13,0,0,0); // Standard shout time
 	if (now>when) {
 		when.setDate(when.getDate()+1);
 	}
@@ -122,9 +142,9 @@ Daily=function(say) {
 	if (current) {
 		var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24)); // Today's part of the current program.
 		
+		// Case = days until program ends
 		if (part<=currPart) {
 			toSay=ref+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
-			console.log("Case "+(currPart-part));
 			switch(currPart-part) {
 				case 10: 
 					Level(say);
@@ -139,12 +159,13 @@ Daily=function(say) {
 					Count(say);
 					break;
 				case 0: 
-					// Ideally, add info about new program to message
-					toSay+="\n\nWe have finished "+current[0]+"!"
+					next=getNext(data);
+					toSay+="\n\nWe have finished **"+current[0]+"**! Join us tomorrow as we start our next program, **"+next[0]+(next[4]!=""?"** ("+next[4]+")":"**")+"!";
 					break;
 			}
-			say(toSay,loc);
-			time=setTimeout(()=>Schedule(say),50000);
+			
+			setTimeout(()=>say(toSay,loc),10000);
+			setTimeout(()=>Schedule(say),60000);
 		}
 	}
 }
@@ -163,7 +184,7 @@ Tally=function() {
 // Vote for level of next Darebee program
 Level=function(say) {
 	// Darebee Pick Levels
-	say(ref+", our current program is "+current[0]+" at level "+current[1]+". What level(s) would you like to be included in the vote for next Darebee program?  Vote for as many as you want, votes will be tallied "+Tally()+".",loc).then(async (say) => {
+	say(ref+", our current program is "+current[0]+" at level "+current[1]+". What level(s) would you like to be included in the vote for next Darebee program?  Vote for as many as you want, votes will be tallied "+Tally()+" or thereabouts.",loc).then(async (say) => {
 		var emojis=["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣"];
 		while (emojis.length>0) {
 			try {
@@ -235,7 +256,7 @@ Program=function(say) {
         }
         
         // Votes will be tallied on [date] at [time].
-        say("**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Vote for as many as you want, though Discord only allows 20 different reacts. Votes will be tallied "+Tall()+". (Note: If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)",loc)
+        say("**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Vote for as many as you want, though Discord only allows 20 different reacts. Votes will be tallied "+Tally()+" or thereabouts. (Note: If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)",loc)
         .then(async (say) => {
             temp.del("level");
             temp.set("program",say.id);
@@ -244,9 +265,15 @@ Program=function(say) {
     .catch(console.error);
 }
 
-CountTies=function(votes,say) {
+CountTies=function(say,votes) {
     var n=0;
-    for (a in votes) {
+	if (!votes) {
+		say("I guess you didn't want another program now. Hmm.",loc);
+		//temp.del("ties");
+		//temp.del("program");
+		return;
+	}
+	for (a in votes) {
         if (votes[a]>n) {
             n=votes[a];
         }
@@ -258,7 +285,7 @@ CountTies=function(votes,say) {
     DBAnnounce(say,program); // Announce winner and set new current
 }
 
-CountVotes=function(votes,say) {
+CountVotes=function(say,votes) {
     var n=0;
     if (!votes) {
         say("I guess you didn't want another program now. Hmm.",loc);
@@ -276,7 +303,7 @@ CountVotes=function(votes,say) {
         if (votes[a]==n) {program.push(a);}
     }
     if (program.length>1) {
-        Tie(program,say);
+        Tie(say,program);
     }
     else {
         DBAnnounce(say,program); // Announce winner and set new current
@@ -286,12 +313,12 @@ CountVotes=function(votes,say) {
 Count=function(say) {
 	var votesID=temp.get("program");
 	var tiesID=temp.get("tie");
-	countReacts(votesID).then(votes=>{if (votes) CountVotes(votes,say)});
-    countReacts(tiesID).then(votes=>{if (votes) CountTies(votes,say)});
+	countReacts(votesID).then(votes=>{if (votes) CountVotes(say,votes)});
+    countReacts(tiesID).then(votes=>{if (votes) CountTies(say,votes)});
 }
 
 // Vote among tied programs
-Tie=function(program,say) {
+Tie=function(say,program) {
 	for (a in program) {
 		ties=data.filter((check)=>{check[3]==program[a]});
 	}
@@ -301,8 +328,9 @@ Tie=function(program,say) {
 	
 	for (b in ties) {
 		toSay+=ties[b][3]+" "+ties[b][0]+": <https://darebee.com/programs/"+ties[b][2]+".html>"+(ties[b][4]!=""?" ("+ties[b][4]+")":"")+"\n";
+		emotes.push(ties[b][3]);
 	}
-	toSay+="\n**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Votes will be tallied "+Tally()+". A tie on this vote and I'll randomly chose one of those winners.";
+	toSay+="\n**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Votes will be tallied "+Tally()+" or thereabouts. A tie on this vote and I'll randomly chose one of those winners.";
 	
 	say(toSay,loc).then(async (say) => {
 		temp.del("program");
@@ -353,7 +381,7 @@ var data=parseCSV(file);
 var current=getCurrent(data); // Current program.
 var currDate=new Date(current[current.length-1].split(/\D+/)); // Date that the current program started.
 var currPart=current[5]||30; // Number of parts in the current program (defalts to 30).
-var start=new Date([2000,1,1]).setDate(currDate.getDate()+currPart+1); // Date that the new program is set to start.
+var start=new Date(currDate);start.setDate(start.getDate()+(currPart+1)); // Date that the new program is set to start.
 
 module.exports.Setup=Setup;
 module.exports.Daily=Daily;
