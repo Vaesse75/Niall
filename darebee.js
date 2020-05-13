@@ -138,7 +138,12 @@ Schedule=function(say) {
 
 // Daily workout functions
 Daily=function(say) {
-	current=getCurrent(data);
+	data=parseCSV(file);
+	current=getCurrent(data); // Current program.
+	currDate=new Date(current[current.length-1].split(/\D+/)); // Date that the current program started.
+	currPart=current[5]||30; // Number of parts in the current program (defalts to 30).
+	start=new Date(currDate);start.setDate(start.getDate()+(currPart+1)); // Date that the new program is set to start.
+	
 	if (current) {
 		var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24)); // Today's part of the current program.
 		
@@ -163,11 +168,11 @@ Daily=function(say) {
 					toSay+="\n\nWe have finished **"+current[0]+"**! Join us tomorrow as we start our next program, **"+next[0]+(next[4]!=""?"** ("+next[4]+")":"**")+"!";
 					break;
 			}
-			
-			setTimeout(()=>say(toSay,loc),10000);
-			setTimeout(()=>Schedule(say),60000);
 		}
 	}
+	else toSay="I don't see a workout today."
+	setTimeout(()=>say(toSay,loc),10000);
+	setTimeout(()=>Schedule(say),600000);
 }
 
 Tally=function() {
