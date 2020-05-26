@@ -179,7 +179,10 @@ Niall.on('message', msg => {
 				DB.Add(msg,chat);
 			}
 			
-			// Remove once automation complete
+			// Remove once automation complete and daily shout works correctly
+			if (input.match(/^!daily$/)) {
+				DB.Daily(chat);
+			}
 			if (input.match(/^!level$/)) {
 				DB.Level(chat);
 			}

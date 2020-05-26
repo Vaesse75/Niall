@@ -138,6 +138,8 @@ Schedule=function(say) {
 
 // Daily workout functions
 Daily=function(say) {
+	toSay="Workout time.\n\n"
+	
 	data=parseCSV(file);
 	current=getCurrent(data); // Current program.
 	currDate=new Date(current[current.length-1].split(/\D+/)); // Date that the current program started.
@@ -149,7 +151,8 @@ Daily=function(say) {
 		
 		// Case = days until program ends
 		if (part<=currPart) {
-			toSay=ref+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
+			console.log("In the CASE");
+			toSay+=ref+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
 			switch(currPart-part) {
 				case 10: 
 					Level(say);
@@ -170,9 +173,11 @@ Daily=function(say) {
 			}
 		}
 	}
-	else toSay="I don't see a workout today."
-	setTimeout(()=>say(toSay,loc),10000);
+	else toSay+="That's odd, I don't see a workout for today.  I guess you can do whatever workout you want."
+	setTimeout(()=>say(toSay,loc),60000);
+	console.log("Past the say.");
 	setTimeout(()=>Schedule(say),600000);
+	console.log("Past the schedule repeat.");
 }
 
 Tally=function() {
