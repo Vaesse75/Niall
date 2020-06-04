@@ -167,14 +167,15 @@ Daily=function(say) {
 					Count(say);
 					break;
 				case 0: 
+					// Check temp for a repeated "next"
 					next=getNext(data);
-					toSay+="\n\nWe have finished **"+current[0]+"**! Join us tomorrow as we start our next program, **"+next[0]+(next[4]!=""?"** ("+next[4]+")":"**")+"!";
+					toSay+="\n\nWe have finished **"+current[0]+"**!"(next!=""?" Join us tomorrow as we start our next program, **"+next[0]+(next[4]!=""?"** ("+next[4]+")":"**")+"!":"");
 					break;
 			}
 		}
 	}
 	else toSay+="That's odd, I don't see a workout for today.  I guess you can do whatever workout you want."
-	setTimeout(()=>say(toSay,loc),60000);
+	say(toSay,loc);
 	console.log("Past the say.");
 	setTimeout(()=>Schedule(say),600000);
 	console.log("Past the schedule repeat.");
