@@ -122,8 +122,8 @@ Add=function(msg,say) {
 	}
 }
 
-// Schedule Daily to run at next 13:00
-Schedule=function(say) {
+// Schedule Daily to run at next 13:00 (commenting this, and putting a test right below it)
+/*Schedule=function(say) {
 	var now=new Date();
 	var when=new Date();
 	
@@ -134,6 +134,19 @@ Schedule=function(say) {
 	}
 	
 	time=setTimeout(()=>{Daily(say)},when-now);
+}*/
+//Schedule test
+Schedule=function(say) {
+	var now=new Date();
+	//uncomment next line and adjust time for test shouts
+	//var when=new DATE(now.getFullYear(), now.getMonth(), now.getDate(), 16, 10, 0, 0) -now; //Checks number of millseconds until shout time
+	//below is standard shout time
+	var when=new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 0, 0, 0) -now; //Checks number of milliseconds, between now and shout time.
+
+	if (when < 0 ) {
+		when += 86400000; //it's after shout time;
+	}
+	setTimeout(function(){Daily(say)}, when);
 }
 
 // Daily workout functions
