@@ -12,7 +12,7 @@ var training;
 Rems=[];
 
 // Announce functions
-training=true; // Comment this line out for normal operations
+//training=true; // Comment this line out for normal operations
 chat=function(say,chan) {
 	if (say) {
 		if (!chan) {
