@@ -174,7 +174,7 @@ Niall.on('message', msg => {
 		}
 		
 		// Admin only responses
-		if (msg.member.roles.get("666316148589068328") || msg.member.id.get("253484104014757889")) {
+		if (msg.member.roles.get("666316148589068328") || msg.member.roles.get("718154951414513684")) {
 			if (input.match(/^!dbprogram/)) {
 				DB.Add(msg,chat);
 			}
