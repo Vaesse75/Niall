@@ -68,7 +68,7 @@ Mbr=function(mem,leadcap) {
 // Initial setup
 Niall.on('ready', () => {
 	// Set Nickname depending on Training status
-	Niall.guilds.get("664197181846061077").members.get("692526000994517102").setNickname(training?"Niall | In Training":"Niall | Village Crier");
+	Niall.guilds.get("664197181846061077").me.setNickname(training?"Niall | In Training":"Niall | Village Crier");
 	
 	// Define Ch and Role objects
 	Ch.set("inn","664197181846061080");
@@ -180,9 +180,6 @@ Niall.on('message', msg => {
 			}
 			
 			// Remove once automation complete and daily shout works correctly
-			if (input.match(/^!daily$/)) {
-				DB.Daily(chat);
-			}
 			if (input.match(/^!level$/)) {
 				DB.Level(chat);
 			}
@@ -192,6 +189,9 @@ Niall.on('message', msg => {
 			if (input.match(/^!count$/)) {
 				DB.Count(chat);
 			}
+		}
+		if (input.match(/^!daily$/)) {
+			DB.Daily(chat);
 		}
 		
 		// Modularized responses
