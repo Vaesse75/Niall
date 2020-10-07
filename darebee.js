@@ -122,19 +122,21 @@ Add=function(msg,say) {
 	}
 }
 
-// Schedule Daily to run at next 13:00 (commenting this, and putting a test right below it)
+// Schedule Daily to run at next 13:00
 Schedule=function(say) {
 	var now=new Date();
 	var when=new Date();
-	
+	//workout = temp.get("workout");
 	//when.setHours(19,40,0,0); // Use to adjust the shout time when training
 	when.setHours(13,0,0,0); // Standard shout time
 	if (now>when) {
 		when.setDate(when.getDate()+1);
 	}
-	
-	time=setTimeout(()=>{Daily(say)},when-now);
-	time="";
+	//temp.set("workout",Number(when));
+	//workout=temp.get("workout");
+	workout=Number(when); // Work-around since I'm not reading/writing to temp file.
+	when=new Date(Number(workout));
+	setTimeout(()=>{Daily(say)},when-now);
 }
 
 // Daily workout functions
@@ -152,7 +154,6 @@ Daily=function(say) {
 		
 		// Case = days until program ends
 		if (part<=currPart) {
-			console.log("In the CASE");
 			toSay+=ref+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
 			switch(currPart-part) {
 				case 10: 
@@ -177,9 +178,10 @@ Daily=function(say) {
 	}
 	else toSay+="That's odd, I don't see a workout for today.  I guess you can do whatever workout you want."
 	say(toSay,loc);
-	console.log("Past the say.");
+	
+	temp.del("workout");
+	workout = temp.get("workout");
 	setTimeout(()=>Schedule(say),600000);
-	console.log("Past the schedule repeat.");
 }
 
 Tally=function() {
@@ -357,7 +359,7 @@ DBAnnounce=function(say,program) {
 		program=program[Math.floor(Math.random()*program.length)];
 	}
 	[winner]=data.filter((check)=>{return check[3]==program;});
-	toSay=ref+", our new program is:\n"+winner[3]+" "+winner[0]+": <https://darebee.com/programs/"+winner[2]+".html>"+(winner[4]!=""?" ("+winner[4]+")":"")+"\n\n";
+	toSay=ref+", the results are in!\n\nOur new program will be:\n"+winner[3]+" "+winner[0]+": <https://darebee.com/programs/"+winner[2]+".html>"+(winner[4]!=""?" ("+winner[4]+")":"")+"\n\n";
 	
 	toSay+="We'll be starting it on "+dateForm(start,true)+".";
 	
@@ -388,12 +390,12 @@ var file="./darebee.csv";
 var loc;
 var ref;
 var client;
-var time;
+var workout;
 var data=parseCSV(file);
 var current=getCurrent(data); // Current program.
 var currDate=new Date(current[current.length-1].split(/\D+/)); // Date that the current program started.
 var currPart=current[5]||30; // Number of parts in the current program (defalts to 30).
-var start=new Date(currDate);start.setDate(start.getDate()+(currPart+1)); // Date that the new program is set to start.
+var start=new Date(currDate);start.setDate(start.getDate()+(currPart)); // Date that the new program is set to start.
 
 module.exports.Setup=Setup;
 module.exports.Daily=Daily;

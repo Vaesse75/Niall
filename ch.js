@@ -1,5 +1,5 @@
 this.get=function(id) {
-    return bot.channels.get(this[id.toLowerCase()]||id.toLowerCase());
+    return bot.channels.cache.get(this[id.toLowerCase()]||id.toLowerCase());
 };
 this.ref=function(id) {
     return "<#"+(this[id.toLowerCase()]||id.toLowerCase())+">";

@@ -12,7 +12,7 @@ var training;
 Rems=[];
 
 // Announce functions
-//training=true; // Comment this line out for normal operations
+training=true; // Comment this line out for normal operations
 chat=function(say,chan) {
 	if (say) {
 		if (!chan) {
@@ -68,7 +68,7 @@ Mbr=function(mem,leadcap) {
 // Initial setup
 Niall.on('ready', () => {
 	// Set Nickname depending on Training status
-	Niall.guilds.get("664197181846061077").me.setNickname(training?"Niall | In Training":"Niall | Village Crier");
+	Niall.guilds.cache.get("664197181846061077").me.setNickname(training?"Niall | In Training":"Niall | Village Crier");
 	
 	// Define Ch and Role objects
 	Ch.set("inn","664197181846061080");
@@ -77,9 +77,11 @@ Niall.on('ready', () => {
 	Ch.set("test","693847888396288090");
 	Ch.set("herald","664889622987538435");
 	Ch.set("darebee","695401715616186429");
+	Ch.set("gem","759088721424285777");
 	Role.set("darebee","674677574898548766");
 	Role.set("leader","666316148589068328");
 	Role.set("quester","693612089134153829");
+	Role.set("donor","759087823394439218");
     
     // Define frequently used references
     onConn = Ch.get("inn");
@@ -89,9 +91,11 @@ Niall.on('ready', () => {
 	testRef = Ch.ref("test");
 	GuideRef = Ch.ref("guide");
 	QuestRef = Ch.ref("quest");
+	GemRef = Ch.ref("gem");
 	LeaderRef = Role.ref("leader");
 	DBRef = Role.ref("darebee");
 	QuesterRef = Role.ref("quester");
+	DonorRef = Role.ref("donor");
     
 	// Wakeup message
     var say=[
@@ -119,7 +123,7 @@ Niall.on('message', msg => {
 		
 		// Triggered responses
 		if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {
-			chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**time** - I'll tell you what time it is for me.  (Useful when comparing to other times I may give.)\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let our Questers know when there's an hour left until the quest is set to start.\n\nROLES\n**!she** - Toggles on and off the She/Her pronoun role.\n**!he** - Toggles on and off the He/Him pronoun role.\n**!they** - Toggles on and off the They/Them pronoun role.\n**!quester** - Toggles on and off the Quester role (get tagged an hour before quests go live).\n**!workout** - Toggle participation and tagging for daily workouts. (In the "+DBConn+".)\n**!spectator** - Toggles ability to observe the "+testRef+".  (You may get extra wrong pings with it on.)\n**!healer**/**!warrior**/**!mage**/**!rogue** - Switch to the chosen class. (You choose your class at level 10.)\n\n**!help** - I'll display this message.",msg.channel);
+			chat(Mbr(msg.member,1)+", here's what I can do!\n\n**!tip** - I'll give you a random tip.\n**!time** - I'll tell you what time it is for me.  (Useful when comparing to other times I may give.)\n**!bday** - Tell me your birthday so we can celebrate together.\n**!quest** - Use this when you send the invite for a new quest and I'll let our Questers know when there's an hour left until the quest is set to start.\n\nROLES\n**!she** - Toggles on and off the She/Her pronoun role.\n**!he** - Toggles on and off the He/Him pronoun role.\n**!they** - Toggles on and off the They/Them pronoun role.\n**!quester** - Toggles on and off the Quester role (get tagged an hour before quests go live).\n**!workout** - Toggle participation and tagging for daily workouts. (In the "+DBConn+".)\n**!spectator** - Toggles ability to observe the "+testRef+".  (You may get extra wrong pings with it on.)\n**!donor** - Toggles inclusion in the list of people willing to offer gem rewards for special tasks, see pinned message in "+GemRef+" for details.\n**!healer**/**!warrior**/**!mage**/**!rogue** - Switch to the chosen class. (You choose your class at level 10.)\n\n**!help** - I'll display this message.",msg.channel);
 		}
 		if (input.match(/^!time$/)||input.match(/^!date$/)) {
 			var dt=new Date();
@@ -159,6 +163,10 @@ Niall.on('message', msg => {
 			Role.Toggle(msg,"696409841538695278",chat);
 		}
 		
+		if (input.match(/^!donor$/)) {
+			Role.Toggle(msg,"759087823394439218",chat);
+		}
+		
 		//Classes Switch 
 		if (input.match(/^!healer$/)) {
 			Role.Class(msg,"healer",chat);
@@ -174,7 +182,7 @@ Niall.on('message', msg => {
 		}
 		
 		// Admin only responses
-		if (msg.member.roles.get("666316148589068328") || msg.member.roles.get("718154951414513684")) {
+		if (msg.member.roles.cache.get("666316148589068328") || msg.member.roles.cache.get("718154951414513684")) {
 			if (input.match(/^!dbprogram/)) {
 				DB.Add(msg,chat);
 			}
@@ -203,7 +211,7 @@ Niall.on('message', msg => {
 
 // New member greeting
 Niall.on('guildMemberAdd', member => {
-    chat("Welcome to the party, "+Mbr(member,0)+"! If you're new to Habitica, please check out "+GuideRef+". Until the "+LeaderRef+" has verified you're in the party, you'll not have permission to talk... sorry about that, but this is supposed to be a private area for the party.\n\nOnce you've been vetted, to see what I can help you with, type `!help`.");
+    chat("Welcome to the party, "+Mbr(member,0)+"! If you're new to Habitica, please check out the "+GuideRef+". Until the "+LeaderRef+" has verified you're in the party, you'll not have permission to talk... sorry about that, but this is supposed to be a private area for the party.\n\nOnce you've been vetted, to see what I can help you with, type `!help`.");
 });
 
 Niall.login(auth.token);

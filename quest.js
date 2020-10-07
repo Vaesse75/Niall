@@ -1,6 +1,5 @@
 const temp = require('./temp.js');
 var quest = temp.get("quest");
-var time;
 
 // Announce new quest and add to temp file.
 Add=function(say,chan,role) {
@@ -24,8 +23,7 @@ Schedule=function(say,chan,role) {
 		var now=new Date();
 		var when=new Date(Number(quest));
 		
-		time=setTimeout(()=>{Announce(say,chan,role)},when-now);
-		time="";
+		setTimeout(()=>{Announce(say,chan,role)},when-now);
 	}
 }
 
