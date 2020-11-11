@@ -76,20 +76,18 @@ dateForm=function(date,noTime) {
 
 // Look at message passed and make array of reacts and counts
 countReacts=async function(ID) {
-	var msg;
-	var reacts=[];
-	for (chan of client.channels.values()) {
-    //reacts=await client.channels.map(chan=>{
-		if (chan.type==="text"&&(chan.name==="training-yard"||chan.name==="courtyard")) {
-			try {
-               msg=await chan.fetchMessage(ID)
-                .then(mesg=>{
-                    return mesg.reactions.map((k,v)=>{reacts[k._emoji.name]=k._emoji.reaction.count;});
-                })
-                .catch(e=>{})
-            }
-			catch(e) {return};
+	var reacts={};
+	var chans=["693847888396288090","695401715616186429"];
+	for (var c = 0; c < chans.length; c++) {
+		var chan=client.channels.cache.get(chans[c]);
+		try {
+			await chan.messages.fetch(ID)
+			.then(msg=>{
+				msg.reactions.cache.forEach((k,v)=>{reacts[k._emoji.name]=k._emoji.reaction.count});
+			})
+			.catch(e=>{})
 		}
+		catch(e) {return};
 	}
 	return reacts;
 }
@@ -252,8 +250,8 @@ Program=function(say) {
         say(ref+", the **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n",loc);
 
         if (current) {
-            say("**Repeat Current Program:**\n☑️ From level "+current[1]+", "+current[0]+": <https://darebee.com/programs/"+current[2]+".html>"+(current[4]!=""?" ("+current[4]+")":"")+".\n*If we repeat, we could all attempt to work to a higher level than we did previously.*\n",loc);
-            emotes.push("☑️");
+            say("**Repeat Current Program:**\n"+current[3]+"️ From level "+current[1]+", "+current[0]+": <https://darebee.com/programs/"+current[2]+".html>"+(current[4]!=""?" ("+current[4]+")":"")+".\n*If we repeat, we could all attempt to work to a higher level than we did previously.*\n",loc);
+            emotes.push(current[3]);
         }
 
         for (var a=1;a<6;a++) {
@@ -301,10 +299,10 @@ CountTies=function(say,votes) {
 
 CountVotes=function(say,votes) {
     var n=0;
-    if (!votes) {
+    if (votes.length==0) {
         say("I guess you didn't want another program now. Hmm.",loc);
-        //temp.del("ties");
-        //temp.del("program");
+        temp.del("ties");
+        temp.del("program");
         return;
     }
     for (a in votes) {
@@ -327,8 +325,8 @@ CountVotes=function(say,votes) {
 Count=function(say) {
 	var votesID=temp.get("program");
 	var tiesID=temp.get("tie");
-	countReacts(votesID).then(votes=>{if (votes) CountVotes(say,votes)});
-    countReacts(tiesID).then(votes=>{if (votes) CountTies(say,votes)});
+	if (votesID) countReacts(votesID).then(votes=>{if (votes) CountVotes(say,votes)});
+     if (tiesID) countReacts(tiesID).then(votes=>{if (votes) CountTies(say,votes)});
 }
 
 // Vote among tied programs

@@ -43,7 +43,7 @@ Class=function(msg,role,say) {
 			say("Switched to **Warrior** role.",msg.channel);
 			break;
 		case "mage":
-			msg.member.roles.ad("667128239520481288").catch(console.error);
+			msg.member.roles.add("667128239520481288").catch(console.error);
 			say("Switched to **Mage** role.",msg.channel);
 			break;
 		case "rogue":
