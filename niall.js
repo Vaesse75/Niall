@@ -1,6 +1,6 @@
 // Set constants and variables
 const Discord = require('discord.js');
-const Niall = bot = new Discord.Client();
+const Niall = bot = new Discord.Client(Discord.Intents.ALL);
 const auth = require('/home/plex/bots/authNiall.json');
 const fs = require('fs');
 const Ch = require('./ch.js');
@@ -8,6 +8,7 @@ const Role = require('./role.js');
 const Birthday = require('./bday.js');
 const DB = require('./darebee.js');
 const Quest = require('./quest.js');
+const cron = require('cron');
 var training;
 Rems=[];
 
@@ -112,8 +113,11 @@ Niall.on('ready', () => {
 	
 	// Functions run on start
 	DB.Setup(Niall,training?testConn:DBConn,DBRef);
-	DB.Schedule(chat);
 	Quest.Schedule(chat,onConn,QuesterRef);
+	
+	//DB.Schedule=new cron.CronJob('00 10 00 * * *', () => DB.Daily(chat)); // Place to play with wrong times while testing.
+	DB.Schedule=new cron.CronJob('00 00 13 * * *', () => DB.Daily(chat));
+	DB.Schedule.start();	
 });
 
 // Reply to messages
@@ -121,6 +125,8 @@ Niall.on('message', msg => {
 	if (bot.user.id!==msg.author.id) {
 		// Respond to any capitalization
 		var input=msg.content.toLowerCase();
+		
+		
 		
 		// Triggered responses
 		if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {

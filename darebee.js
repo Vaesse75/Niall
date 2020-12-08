@@ -120,23 +120,6 @@ Add=function(msg,say) {
 	}
 }
 
-// Schedule Daily to run at next 13:00
-Schedule=function(say) {
-	var now=new Date();
-	var when=new Date();
-	//workout = temp.get("workout");
-	//when.setHours(19,40,0,0); // Use to adjust the shout time when training
-	when.setHours(13,0,0,0); // Standard shout time
-	if (now>when) {
-		when.setDate(when.getDate()+1);
-	}
-	//temp.set("workout",Number(when));
-	//workout=temp.get("workout");
-	workout=Number(when); // Work-around since I'm not reading/writing to temp file.
-	when=new Date(Number(workout));
-	setTimeout(()=>{Daily(say)},when-now);
-}
-
 // Daily workout functions
 Daily=function(say) {
 	toSay="Workout time.\n\n"
@@ -179,7 +162,6 @@ Daily=function(say) {
 	
 	temp.del("workout");
 	workout = temp.get("workout");
-	setTimeout(()=>Schedule(say),600000);
 }
 
 Tally=function() {
@@ -281,8 +263,8 @@ CountTies=function(say,votes) {
     var n=0;
 	if (!votes) {
 		say("I guess you didn't want another program now. Hmm.",loc);
-		//temp.del("ties");
-		//temp.del("program");
+		temp.del("tie");
+		temp.del("program");
 		return;
 	}
 	for (a in votes) {
@@ -325,16 +307,21 @@ CountVotes=function(say,votes) {
 Count=function(say) {
 	var votesID=temp.get("program");
 	var tiesID=temp.get("tie");
-	if (votesID) countReacts(votesID).then(votes=>{if (votes) CountVotes(say,votes)});
-     if (tiesID) countReacts(tiesID).then(votes=>{if (votes) CountTies(say,votes)});
+	if (tiesID) countReacts(tiesID).then(votes=>{if (votes) CountTies(say,votes)});
+	else if (votesID) countReacts(votesID).then(votes=>{if (votes) CountVotes(say,votes)});
+   
 }
 
 // Vote among tied programs
 Tie=function(say,program) {
+	var ties=[];
+	var emotes=[];
+	
 	for (a in program) {
-		ties=data.filter((check)=>{check[3]==program[a]});
+		data.forEach((check)=>{if(check[3]==program[a]) ties.push(check);});
 	}
 
+	console.log(ties);
 	// Take the winning programs and restart vote among only them.
 	toSay=ref+", we had a tie! Please vote from the programs listed below.\n\n";
 	
@@ -393,12 +380,11 @@ var data=parseCSV(file);
 var current=getCurrent(data); // Current program.
 var currDate=new Date(current[current.length-1].split(/\D+/)); // Date that the current program started.
 var currPart=current[5]||30; // Number of parts in the current program (defalts to 30).
-var start=new Date(currDate);start.setDate(start.getDate()+(currPart)); // Date that the new program is set to start.
+var start=new Date(currDate);start.setDate(start.getDate()+(currPart)-1); // Date that the new program is set to start.
 
 module.exports.Setup=Setup;
 module.exports.Daily=Daily;
 module.exports.Add=Add;
 module.exports.Program=Program;
 module.exports.Count=Count;
-module.exports.Schedule=Schedule;
 module.exports.Level=Level;
