@@ -20,7 +20,7 @@ nth=function(d) {
 Import=function() {
 	var sch; // Array (0 indexed)
 	var temp; // String for file write
-	var dates=[];; // Keyed array
+	var dates=[]; // Keyed array
 	
 	// Read the file
 	contents=fs.readFileSync(file, 'utf8');
@@ -49,7 +49,7 @@ Import=function() {
 	// Write the clean file
 	sch=[];
 	for (var a in dates) {
-		sch.push(`"`+a+'","'+dates[a].join('","')+'"');
+		sch.push('"'+a+'","'+dates[a].join('","')+'"');
 	}
 	temp=sch.join("\n")+"\n";
 	fs.writeFileSync(file, temp);
@@ -63,8 +63,8 @@ module.exports.Add=function(msg, say) {
 	
 	if (info && info.length==4) {
         var name=info[1];
-        var day=info[3];
-        var month=info[2];
+		var month=info[2];
+		var day=info[3];
 		
 		// Confirm correct information
 		say("Just to confirm, I have you as "+name+", born the "+Number(day)+nth(day)+" day of "+months(month)+". If this is wrong or you need to change it later, give me the data again (starting with the !bday trigger).",msg.channel);
@@ -81,25 +81,35 @@ module.exports.Add=function(msg, say) {
 	}
 }
 
+module.exports.Daily=function(say,chan) {
+	for (ID in Schedule) {
+		module.exports.Check(ID,say,chan);
+	}
+}
+
 module.exports.Check=function(ID,say,chan) {
 	if (ID in Schedule) {
 		var now=new Date();
 		var Sch=Schedule[ID];
 		
-		// Check for correct date and message from user
-		if (Sch.length == 4 && Number(Sch[3])!=now.getFullYear() && Number(Sch[2])==now.getMonth()+1 && Number(Sch[1])==now.getDate()) {
-			fs.appendFileSync(file, '"'+ID+'","'+Sch[0]+'","'+Sch[1]+'","'+Sch[2]+'","'+now.getFullYear()+'"\n');
-			var text=[
-				"It looks like today is your birthday, "+Sch[0]+".  Hope it's wonderful!",
-				"Hey everyone!  It's "+Sch[0]+"'s birthday!  Time to throw a party!",
-				"Pssst! Everyone, I heard it's "+Sch[0]+"'s birthday."
-			];
-			
-			Import();
-			
-			say(text[Math.floor(Math.random()*say.length)],chan);
-		}
+		Announce(ID,Sch,say,chan);
 	}
+}
+
+Announce=function(ID,Sch,say,chan) {
+	// Check for correct date and message from user
+	if (Sch.length == 4 && Number(Sch[3])!=now.getFullYear() && Number(Sch[2])==now.getMonth()+1 && Number(Sch[1])==now.getDate()) {
+		fs.appendFileSync(file, '"'+ID+'","'+Sch[0]+'","'+Sch[1]+'","'+Sch[2]+'","'+now.getFullYear()+'"\n');
+		var text=[
+		"<@"+ID+"> It looks like today is "+Sch[0]+"'s birthday.  Hope it's wonderful!",
+		"<@"+ID+"> Hey everyone!  It's "+Sch[0]+"'s birthday!  Time to throw a party!",
+		"<@"+ID+"> Pssst! Everyone, I heard it's "+Sch[0]+"'s birthday."
+		];
+		
+		Import();
+		
+		say(text[Math.floor(Math.random()*say.length)],chan);
+		}
 }
 
 Import();

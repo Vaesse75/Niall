@@ -117,7 +117,11 @@ Niall.on('ready', () => {
 	
 	//DB.Schedule=new cron.CronJob('00 10 00 * * *', () => DB.Daily(chat)); // Place to play with wrong times while testing.
 	DB.Schedule=new cron.CronJob('00 00 13 * * *', () => DB.Daily(chat));
-	DB.Schedule.start();	
+	DB.Schedule.start();
+	
+	//
+	Birthday.Schedule=new cron.CronJob('00 00 12 * * *', () => Birthday.Daily(chat,onConn));
+	Birthday.Schedule.start();
 });
 
 // Reply to messages
