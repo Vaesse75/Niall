@@ -8,13 +8,15 @@ const Role = require('./role.js');
 const Birthday = require('./bday.js');
 const DB = require('./darebee.js');
 const Quest = require('./quest.js');
+const Type = require('./typing.js');
 const cron = require('cron');
 var training;
-Rems=[];
+var chatQueue=[];
 
 // Announce functions
 //training=true; // Comment this line out for normal operations
-chat=function(say,chan) {
+
+chat=async function(say,chan) {
 	if (say) {
 		if (!chan) {
 			chan=onConn;
@@ -23,18 +25,20 @@ chat=function(say,chan) {
 		if (training) {
 			chan=testConn;
 		}
-		return chan.send(say);
-	};
+		Type(say,chan);
+	}
 }
+
 reply=function(say,chan) {
 	if (say) {
 		if (!chan) {
 			chan=onConn;
 			console.error("No channel sent for (reply): "+say)
 		}
-		return chan.send(say);
+		return chat(say,chan);
 	};
 }
+
 richChat=function(say,chan,color) {
 	if (say) {
 		if (!color) {
@@ -53,6 +57,7 @@ richChat=function(say,chan,color) {
 		return chan.send({ embed });
 	};
 }
+
 test=function(say,chan) {
 	if (!chan) {
 		chan=onconn;
@@ -129,9 +134,7 @@ Niall.on('message', msg => {
 	if (bot.user.id!==msg.author.id) {
 		// Respond to any capitalization
 		var input=msg.content.toLowerCase();
-		
-		
-		
+				
 		// Triggered responses
 		if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {
 			chat(Mbr(msg.member,1)+", here's what I can do!\n\n"
