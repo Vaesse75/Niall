@@ -10,6 +10,15 @@ const DB = require('./darebee.js');
 const Quest = require('./quest.js');
 const Type = require('./typing.js');
 const cron = require('cron');
+/*
+// folder/type, key
+let plugins=[["commands","name"],["socials","trigger"],["core","name",0]];
+plugins.forEach(plg=>{
+	client[plg[0]]=new Discord.Collection();
+	let tmp=fs.readdirSync("./"+plg[0]).filter(file => file.endsWith(".js"));
+	for (const file of tmp) findPlugins(client,require(`./${plg[0]}/${file}`),plg);
+});
+*/
 var training;
 var chatQueue=[];
 
@@ -235,6 +244,31 @@ Niall.on('message', msg => {
 		Birthday.Check(msg.author.id,chat,msg.channel); // Birthday greetings
 		require('./tips.js')(input,richChat,msg.channel,'#ffffcc'); // Tips
 	}
+	
+	/*if (client.user.id !== msg.author.id) {
+		const args = msg.content.slice(prefix.length).split(/ +/);
+		if (msg.content.startsWith(`${prefix}${commandName}`) && client.commands.has(commandName)) {
+			const command=client.commands.get(commandName);
+			if (command.args && !args.length) {
+				let reply = `You didn't provide any arguments, ${msg.author}!`;
+				if (command.usage) {
+					reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
+				}
+				return typing(reply,msg.channel);
+			}
+			else command.execute(msg, args);
+		}
+		
+		// Plain text social responses
+		else {
+			runSocials(msg);
+		}
+		
+		// help text
+		if (msg.content.match(/^!help/i)||msg.content.match(/^help.*carl.i)) {
+			typing(`${msg.author}, here's a quick help list!\n\n!ping ["plex"/"calibre"/"ftp"/"all"/""] - Asks me the status of various services.\n!tips - Asks me for a random tip.\n!help - Tells me to display this message.\n\nIf you need assistance or have a suggestion for my service, let a member of our Casting staff know in ${HelpRef}.`,msg.channel);
+		}
+		*/
 });
 
 // New member greeting

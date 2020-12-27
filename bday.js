@@ -9,6 +9,7 @@ months=function(num) {
 }
 
 nth=function(d) {
+	if (d==11||d==12||d==13) return "th";
 	switch (d % 10) {
 		case 1: return "st";
 		case 2: return "nd";

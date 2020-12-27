@@ -5,12 +5,6 @@ Setup=function(bot,DBConn,DBRef) {
 	ref=DBRef;
 }
 
-// Return emoji from name.
-// Works for server emoji ONLY.  Can NOT find Discord generic emoji.  Use UNICODE cut and paste for generics.
-emoji=function(msg,emojiName) {
-	return msg.guild.emojis.find(emoji => emoji.name === emojiName);
-}
-
 // Read CSV file, return array.
 parseCSV=function(file,a) {
 	var contents=fs.readFileSync(file, 'utf8');
@@ -22,6 +16,44 @@ parseCSV=function(file,a) {
 		arr=aarr;
 	}
 	return arr;
+}
+
+Import=function() {
+	var sch; // Array (0 indexed)
+	var temp; // String for file write
+	var progs=[]; // Keyed array
+	
+	// Read the file
+	contents=parseCSV(file);
+	
+	// Remove trailing hard return(s)
+	while (contents.slice(-1)=="\n") {
+		contents=contents.slice(0,-1);
+	}
+	
+	// Creating array of strings by lines
+	sch=contents.split("\n");
+	
+	// Split strings into sub-arrays and dupe check
+	for (var a in sch) {
+		if (sch[a][0] != "" ) {
+			// Split strings into sub-arrays
+			sch[a]=sch[a].slice(1,-1).split('","');
+			// Move ID to key to dupe check
+			progs[sch[a][0]]=sch[a].slice(1);
+		}
+	}
+	
+	// Pass clean keyed data to Schedule
+	data=progs;
+	
+	// Write the clean file
+	sch=[];
+	for (var a in progs) {
+		sch.push('"'+a+'","'+progs[a].join('","')+'"');
+	}
+	temp=sch.join("\n")+"\n";
+	fs.writeFileSync(file, temp);
 }
 
 // Figure out what the current program is from workout.csv.
@@ -45,21 +77,13 @@ getCurrent=function(data) {
 }
 
 getNext=function(data) {
-	var next=[];
-	var n=new Date();
-	var s=new Date([9999,1,1]);
-	var date=false;
-	
-	// Select next (most recent in past) and voted records
+	var test=temp.get("next");
 	for (a in data) {
-		var d=new Date(data[a][data[a].length-1].split(/\D+/).map(Number));
-		if (d > n && s > d) {
-			next=data[a];
-			s=new Date(next[next.length-1].split(/\D+/).map(Number));
-			date=true;
+		if (test==data[a][0]) {
+			program=data[a];
 		}
 	}
-	if (date) return next;
+	if (program) return program;
 	else return false;
 }
 
@@ -71,7 +95,7 @@ dateForm=function(date,noTime) {
 	else {
         date=new Date(date);
     }
-	return(date.getFullYear().toString().padStart(4,'0')+"-"+(date.getMonth()+1).toString().padStart(2,'0')+"-"+date.getDate().toString().padStart(2,'0')+(noTime?"":" at "+date.getHours().toString().padStart(2,'0')+":"+date.getMinutes().toString().padStart(2,'0')+" eastern"));
+	return(date.toISOString().slice(0,10)+(noTime?"":" at "+date.toISOString().slice(11,16)+" eastern"));
 }
 
 // Look at message passed and make array of reacts and counts
@@ -92,31 +116,32 @@ countReacts=async function(ID) {
 	return reacts;
 }
 
-// Add Darebee programs
+// Add Darebee programs BROKEN
 Add=function(msg,say) {
 	// Declare variables
 	var ID=msg.author.id;
 	var input=msg.content;
-	var info=input.match(/^!dbprogram \"(.+)\" \"([1-5])\" \"(.+)\" \"(.+)\" \"(.*)\" \"([1-5]{2})\"/);
+	var info=input.match(/^!dbprogram \"(.+)\" \"([1-5])\" \"(.+)\" \"(.+)\" \"(.*)\" \"([1-5]{2})?\"/);
 	
 	if (info && info.length==7) {
 		var name=info[1];
 		var level=info[2];
 		var URL=info[3];
-		var emojiName=info[4];
+		var emoji=info[4];
 		var notes=info[5];
 		var days=info[6]
 		
 		// Confirm correct information
-		say("Just to confirm, I have a new level "+level+" program called "+name+". The URL for this program is <https://darebee.com/programs/"+URL+".html> and the emoji is "+emoji(msg,emojiName)+".",msg.channel);
+		say("Just to confirm, I have a new level "+level+" program called "+name+". The URL for this program is <https://darebee.com/programs/"+URL+".html> and the emoji is "+emoji+".",msg.channel);
 		
 		// Record to csv file
-		//fs.appendFileSync(file, '"'+name+'","'+level+'","'+URL+'","'+emojiName+'","'+notes+'","'+days+'"\n');
-		say("I've added that program to my workout book.",msg.channel);
+		fs.appendFileSync(file, '"'+emoji+'","'+name+'","'+level+'","'+URL+'","'+notes+'","'+days+'"\n');
+		Import();
+		say("I've added that program to my workout book./n/nActually, that sounds like too much work.",msg.channel);
 	}
 	else {
+		say('I need the new program in this format:\n\n**!DBProgram** **"program name"** (plain text) **"level"** (1-5, integers only) **"URL"** (just the page name without the .html extension) **"emoji"** (must be unicode) **"any notes"** (use "" if no notes) **"days"** (how long the program lasts, for default of 30 use "").',msg.channel);
 		// Respond to function call and ask for data
-		say('Reminder, you need to add the emoji for the program to Discord first. I need the new program in this format:\n\n**!DBProgram** **"program name"** (plain text) **"level"** (1-5, integers only) **"URL"** (just the page name without the .html extension) **"emoji name"** (do not include the `:`s, must be on this server) **"any notes"** (use "" if no notes) **"days"** (how long the program lasts).',msg.channel);
 	}
 }
 
@@ -135,7 +160,7 @@ Daily=function(say) {
 		
 		// Case = days until program ends
 		if (part<=currPart) {
-			toSay+=ref+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[2]+".html?start="+part+"> (If you want to join us, now or in the future, let us know!)";
+			toSay+=ref+", beginning our workout! Today's workout: <https://darebee.com/programs/"+current[3]+".html?start="+part+"> (Use `!workout` to toggle pings like this on/off. Without this role you won't be allowed to talk in this channel.)";
 			switch(currPart-part) {
 				case 10: 
 					Level(say);
@@ -150,9 +175,13 @@ Daily=function(say) {
 					Count(say);
 					break;
 				case 0: 
-					// Check temp for a repeated "next"
 					next=getNext(data);
-					toSay+="\n\nWe have finished **"+current[0]+"**!"+(next!=""?" Join us tomorrow as we start our next program, **"+next[0]+(next[4]!=""?"** ("+next[4]+")":"**")+"!":"");
+					toSay+="\n\nWe have finished **"+current[1]+"**!"+(next!=""?" Join us tomorrow as we start our next program, **"+next[1]+(next[4]!=""?"** ("+next[4]+")":"**")+"!":"");
+					// Add new date into darbee.csv
+					next.pop().push(start);
+					fs.appendFileSync(file,csv.fromArray(next));
+					Import();
+					temp.del("next");
 					break;
 			}
 		}
@@ -164,6 +193,7 @@ Daily=function(say) {
 	workout = temp.get("workout");
 }
 
+// State time when votes will be tallied.
 Tally=function() {
 	var tally="in 48 hours";
 	var date=new Date();
@@ -178,7 +208,7 @@ Tally=function() {
 // Vote for level of next Darebee program
 Level=function(say) {
 	// Darebee Pick Levels
-	say(ref+", our current program is "+current[0]+" at level "+current[1]+". What level(s) would you like to be included in the vote for next Darebee program?  Vote for as many as you want, votes will be tallied "+Tally()+" or thereabouts.",loc).then(async (say) => {
+	say(ref+", our current program is "+current[1]+" at level "+current[2]+". What level(s) would you like to be included in the vote for next Darebee program?  Vote for as many as you want, votes will be tallied "+Tally()+" or thereabouts.",loc).then(async (say) => {
 		var emojis=["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣"];
 		while (emojis.length>0) {
 			try {
@@ -232,17 +262,17 @@ Program=function(say) {
         say(ref+", the **Co-op Workout** can continue if anyone is interested.  In a short while, we'll be done with the current Darebee program.  So now it's time to vote for our next program.\n",loc);
 
         if (current) {
-            say("**Repeat Current Program:**\n"+current[3]+"️ From level "+current[1]+", "+current[0]+": <https://darebee.com/programs/"+current[2]+".html>"+(current[4]!=""?" ("+current[4]+")":"")+".\n*If we repeat, we could all attempt to work to a higher level than we did previously.*\n",loc);
-            emotes.push(current[3]);
+            say("**Repeat Current Program:**\n"+current[0]+"️ From level "+current[2]+", "+current[1]+": <https://darebee.com/programs/"+current[3]+".html>"+(current[4]!=""?" ("+current[4]+")":"")+".\n*If we repeat, we could all attempt to work to a higher level than we did previously.*\n",loc);
+            emotes.push(current[0]);
         }
 
         for (var a=1;a<6;a++) {
             if (level.includes(a)) {
                 toSay="**Or we can choose something from level "+a+":**";
                 for (b in voted) {
-                    if (voted[b][1] == a) {
-                        toSay+="\n"+voted[b][3]+" "+voted[b][0]+": <https://darebee.com/programs/"+voted[b][2]+".html>"+(voted[b][4]!=""?" ("+voted[b][4]+")":"");
-                        emotes.push(voted[b][3]);
+                    if (voted[b][2] == a) {
+                        toSay+="\n"+voted[b][0]+" "+voted[b][1]+": <https://darebee.com/programs/"+voted[b][3]+".html>"+(voted[b][4]!=""?" ("+voted[b][4]+")":"");
+                        emotes.push(voted[b][0]);
                     }
                 }
                 say(toSay,loc);
@@ -250,7 +280,7 @@ Program=function(say) {
         }
         
         // Votes will be tallied on [date] at [time].
-        say("**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Vote for as many as you want, though Discord only allows 20 different reacts. Votes will be tallied "+Tally()+" or thereabouts. (Note: If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)",loc)
+        say("**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Vote for as many as you want, though Discord only allows 20 different reacts. Votes will be tallied "+Tally()+" or thereabouts. (If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)",loc)
         .then(async (say) => {
             temp.del("level");
             temp.set("program",say.id);
@@ -300,7 +330,7 @@ CountVotes=function(say,votes) {
         Tie(say,program);
     }
     else {
-        DBAnnounce(say,program); // Announce winner and set new current
+		DBAnnounce(say,program); // Announce winner and set new current
     }
 }
 
@@ -309,7 +339,6 @@ Count=function(say) {
 	var tiesID=temp.get("tie");
 	if (tiesID) countReacts(tiesID).then(votes=>{if (votes) CountTies(say,votes)});
 	else if (votesID) countReacts(votesID).then(votes=>{if (votes) CountVotes(say,votes)});
-   
 }
 
 // Vote among tied programs
@@ -318,16 +347,15 @@ Tie=function(say,program) {
 	var emotes=[];
 	
 	for (a in program) {
-		data.forEach((check)=>{if(check[3]==program[a]) ties.push(check);});
+		data.forEach((check)=>{if(check[0]==program[a]) ties.push(check);});
 	}
 
-	console.log(ties);
 	// Take the winning programs and restart vote among only them.
 	toSay=ref+", we had a tie! Please vote from the programs listed below.\n\n";
 	
 	for (b in ties) {
-		toSay+=ties[b][3]+" "+ties[b][0]+": <https://darebee.com/programs/"+ties[b][2]+".html>"+(ties[b][4]!=""?" ("+ties[b][4]+")":"")+"\n";
-		emotes.push(ties[b][3]);
+		toSay+=ties[b][0]+" "+ties[b][1]+": <https://darebee.com/programs/"+ties[b][3]+".html>"+(ties[b][4]!=""?" ("+ties[b][4]+")":"")+"\n";
+		emotes.push(ties[b][0]);
 	}
 	toSay+="\n**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Votes will be tallied "+Tally()+" or thereabouts. A tie on this vote and I'll randomly chose one of those winners.";
 	
@@ -343,26 +371,14 @@ DBAnnounce=function(say,program) {
 	if (Array.isArray(program)) {
 		program=program[Math.floor(Math.random()*program.length)];
 	}
-	[winner]=data.filter((check)=>{return check[3]==program;});
-	toSay=ref+", the results are in!\n\nOur new program will be:\n"+winner[3]+" "+winner[0]+": <https://darebee.com/programs/"+winner[2]+".html>"+(winner[4]!=""?" ("+winner[4]+")":"")+"\n\n";
+	[winner]=data.filter((check)=>{return check[0]==program;});
+	
+	toSay=ref+", the results are in!\n\nOur new program will be:\n"+winner[0]+" "+winner[1]+": <https://darebee.com/programs/"+winner[3]+".html>"+(winner[4]!=""?" ("+winner[4]+")":"")+"\n\n";
 	
 	toSay+="We'll be starting it on "+dateForm(start,true)+".";
+	temp.set("next",winner[0],dateForm(start,true));
 	
-	for (a of data) {
-		if (data[a]==winner) {
-			data[a][data[a].length-1]=dateForm(start,true);
-		}
-	}
-	
-	arr=[];
-	for (var a in data) {
-		arr.push(`"`+data[a].join('","')+'"');
-	}
-	temper=arr.join("\n")+"\n";
-	
-	fs.writeFileSync(file, temper);
-	
-	say(toSay,loc).then(say=>{
+	say(toSay,loc).then(()=>{
 		temp.del("tie");
 	})
 	.catch(console.error);
@@ -371,6 +387,7 @@ DBAnnounce=function(say,program) {
 //Set contants and variables
 var fs = require('fs');
 const temp = require('./temp.js');
+var csv=require('./csv.js')
 var file="./darebee.csv";
 var loc;
 var ref;
