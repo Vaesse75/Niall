@@ -32,13 +32,11 @@ Import=function() {
 	}
 	
 	// Creating array of strings by lines
-	sch=contents.split("\n");
+	sch=contents;
 	
 	// Split strings into sub-arrays and dupe check
 	for (var a in sch) {
 		if (sch[a][0] != "" ) {
-			// Split strings into sub-arrays
-			sch[a]=sch[a].slice(1,-1).split('","');
 			// Move ID to key to dupe check
 			progs[sch[a][0]]=sch[a].slice(1);
 		}
@@ -154,8 +152,9 @@ Daily=function(say) {
 	currDate=new Date(current[current.length-1].split(/\D+/)); // Date that the current program started.
 	currPart=current[5]||30; // Number of parts in the current program (defalts to 30).
 	start=new Date(currDate);start.setDate(start.getDate()+(currPart+1)); // Date that the new program is set to start.
-	
-	if (current) {
+	temp.del("daily");
+	temp.set("daily",dateForm(new Date(),true));
+	if (current!="") {
 		var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24)); // Today's part of the current program.
 		
 		// Case = days until program ends
@@ -176,10 +175,14 @@ Daily=function(say) {
 					break;
 				case 0: 
 					next=getNext(data);
+					tomm=new Date()
+					tomm.setDate(tomm.getDate() + 1);
+					
 					toSay+="\n\nWe have finished **"+current[1]+"**!"+(next!=""?" Join us tomorrow as we start our next program, **"+next[1]+(next[4]!=""?"** ("+next[4]+")":"**")+"!":"");
 					// Add new date into darbee.csv
-					next.pop().push(start);
-					fs.appendFileSync(file,csv.fromArray(next));
+					next.pop();
+					next.push(dateForm(tomm,true));
+					fs.appendFileSync(file,csv.fromArray([next]));
 					Import();
 					temp.del("next");
 					break;
@@ -397,7 +400,7 @@ var data=parseCSV(file);
 var current=getCurrent(data); // Current program.
 var currDate=new Date(current[current.length-1].split(/\D+/)); // Date that the current program started.
 var currPart=current[5]||30; // Number of parts in the current program (defalts to 30).
-var start=new Date(currDate);start.setDate(start.getDate()+(currPart)-1); // Date that the new program is set to start.
+var start=new Date(currDate);start.setDate(start.getDate()+(currPart)); // Date that the new program is set to start.
 
 module.exports.Setup=Setup;
 module.exports.Daily=Daily;

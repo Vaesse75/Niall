@@ -1,7 +1,7 @@
 // Set constants and variables
 const Discord = require('discord.js');
 const Niall = bot = new Discord.Client(Discord.Intents.ALL);
-const auth = require('/home/plex/bots/authNiall.json');
+const {prefix,token} = require('/home/plex/bots/authNiall.json');
 const fs = require('fs');
 const Ch = require('./ch.js');
 const Role = require('./role.js');
@@ -10,15 +10,20 @@ const DB = require('./darebee.js');
 const Quest = require('./quest.js');
 const Type = require('./typing.js');
 const cron = require('cron');
-/*
+
+const findPlugins=function(bot,command,plg) {
+	let [prop,key]=plg;
+	(plg.length>2?true:("execute" in command) && (key in command))?bot[prop].set(command[key],command):Object.keys(command).forEach((c) => {findPlugins(bot,command[c],plg);});
+}
+
 // folder/type, key
 let plugins=[["commands","name"],["socials","trigger"],["core","name",0]];
 plugins.forEach(plg=>{
-	client[plg[0]]=new Discord.Collection();
+	bot[plg[0]]=new Discord.Collection();
 	let tmp=fs.readdirSync("./"+plg[0]).filter(file => file.endsWith(".js"));
-	for (const file of tmp) findPlugins(client,require(`./${plg[0]}/${file}`),plg);
+	for (const file of tmp) findPlugins(bot,require(`./${plg[0]}/${file}`),plg);
 });
-*/
+
 var training;
 var chatQueue=[];
 
@@ -38,16 +43,6 @@ chat=async function(say,chan) {
 	}
 }
 
-reply=function(say,chan) {
-	if (say) {
-		if (!chan) {
-			chan=onConn;
-			console.error("No channel sent for (reply): "+say)
-		}
-		return chat(say,chan);
-	};
-}
-
 richChat=function(say,chan,color) {
 	if (say) {
 		if (!color) {
@@ -65,14 +60,6 @@ richChat=function(say,chan,color) {
 			.setDescription(say);
 		return chan.send({ embed });
 	};
-}
-
-test=function(say,chan) {
-	if (!chan) {
-		chan=onconn;
-		console.error("No channel sent for:")
-	}
-	console.log(say);
 }
 
 // Replace user reference with "friend" (proper case) when no user referenced
@@ -151,6 +138,7 @@ Niall.on('message', msg => {
 			+"**!time** - I'll tell you what time it is for me.  (Useful when comparing to other times I may give.)\n"
 			+"**!bday** - Tell me your birthday so we can celebrate together.\n"
 			+"**!quest** - Use this when you send the invite for a new quest and I'll let our Questers know when there's an hour left until the quest is set to start.\n\n"
+			+"**!roll** - Rolls the given number of dice. Default is 1d6.  (Eg, ``!roll 1d20``)"
 			+"ROLES\n"
 			+"**!she** - Toggles on and off the She/Her pronoun role.\n"
 			+"**!he** - Toggles on and off the He/Him pronoun role.\n"
@@ -240,35 +228,31 @@ Niall.on('message', msg => {
 		}
 		
 		// Modularized responses
-		require('./social.js')(input,reply,msg.channel); // Social responses
+		require('./social.js')(input,chat,msg.channel); // Social responses
 		Birthday.Check(msg.author.id,chat,msg.channel); // Birthday greetings
 		require('./tips.js')(input,richChat,msg.channel,'#ffffcc'); // Tips
 	}
 	
-	/*if (client.user.id !== msg.author.id) {
-		const args = msg.content.slice(prefix.length).split(/ +/);
-		if (msg.content.startsWith(`${prefix}${commandName}`) && client.commands.has(commandName)) {
-			const command=client.commands.get(commandName);
-			if (command.args && !args.length) {
-				let reply = `You didn't provide any arguments, ${msg.author}!`;
-				if (command.usage) {
-					reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
-				}
-				return typing(reply,msg.channel);
-			}
-			else command.execute(msg, args);
-		}
+	if (bot.user.id !== msg.author.id) {
+        const args = msg.content.slice(prefix.length).split(/ +/);
+        const commandName = args.shift().toLowerCase();
+        if (msg.content.startsWith(`${prefix}${commandName}`) && bot.commands.has(commandName)) {
+            const command=bot.commands.get(commandName);
+            if (command.args && !args.length) {
+                let reply = `You didn't provide any arguments, ${msg.author}!`;
+                if (command.usage) {
+                    reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
+                }
+                return chat(reply,msg.channel);
+            }
+            else chat(command.execute(msg, args),msg.channel);
+        }
 		
 		// Plain text social responses
-		else {
+		/*else {
 			runSocials(msg);
-		}
-		
-		// help text
-		if (msg.content.match(/^!help/i)||msg.content.match(/^help.*carl.i)) {
-			typing(`${msg.author}, here's a quick help list!\n\n!ping ["plex"/"calibre"/"ftp"/"all"/""] - Asks me the status of various services.\n!tips - Asks me for a random tip.\n!help - Tells me to display this message.\n\nIf you need assistance or have a suggestion for my service, let a member of our Casting staff know in ${HelpRef}.`,msg.channel);
-		}
-		*/
+		}*/
+    }
 });
 
 // New member greeting
@@ -276,4 +260,4 @@ Niall.on('guildMemberAdd', member => {
     chat("Welcome to the party, "+Mbr(member,0)+"! If you're new to Habitica, please check out the "+GuideRef+". Until the "+LeaderRef+" has verified you're in the party, you'll not have permission to talk... sorry about that, but this is supposed to be a private area for the party.\n\nOnce you've been vetted, to see what I can help you with, type `!help`.");
 });
 
-Niall.login(auth.token);
+Niall.login(token);

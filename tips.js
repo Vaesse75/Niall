@@ -12,6 +12,7 @@ module.exports=function(input,say,chan,color) {
 			"**Method for Deciding When There Are No Pros or Cons to Use**\n- First make a list of everything you're deciding between.\n- Then number everything on the list.\n- Then use a random number generator (or a die) to choose a number.\n- If you **immediately** wish another number came up, that's your answer.\n- Otherwise, choose whatever was selected.",
 			"Break as many things as you can into smaller steps. This can be done by checklists in daily or to-dos or extra habits.  Ask your party members if you need help broking a task down.",
 			"Regularly check your task lists to ensure they're still appropriate (not too hard or too easy) and relevant (something you're working on or want to be working on).  Maybe create a Daily (set to monthly or every three months) task to do this.",
+			"For some suggestions on how to get out of the Tavern, [check this out](https://discord.com/channels/664197181846061077/664199483025915904/664219548756738052).",
 			"To make sure your goals are clear and reachable, each one should be:\n**S**pecific (Walk for 30 minutes *instead of* Exercise)\n**M**easurable (Save $20 *instead of* Save money)\n**A**ttainable (is this something *you* can do?)\n**R**elevant (is this going to make you or your life better)**T**imely (setting a time frame can help keep you on target)\n\n[More Details/Examples Here](https://habitica.fandom.com/wiki/SMART_Goal_Setting)"
 		];
 		say(text[Math.floor(Math.random()*text.length)],chan,color);
