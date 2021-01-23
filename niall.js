@@ -39,7 +39,7 @@ chat=async function(say,chan) {
 		if (training) {
 			chan=testConn;
 		}
-		Type(say,chan);
+		return Type(say,chan);
 	}
 }
 

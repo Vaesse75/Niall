@@ -211,17 +211,17 @@ Tally=function() {
 // Vote for level of next Darebee program
 Level=function(say) {
 	// Darebee Pick Levels
-	say(ref+", our current program is "+current[1]+" at level "+current[2]+". What level(s) would you like to be included in the vote for next Darebee program?  Vote for as many as you want, votes will be tallied "+Tally()+" or thereabouts.",loc).then(async (say) => {
+	say(ref+", our current program is "+current[1]+" at level "+current[2]+". What level(s) would you like to be included in the vote for next Darebee program?  Vote for as many as you want, votes will be tallied "+Tally()+" or thereabouts.",loc).then(async (msg) => {
 		var emojis=["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣"];
 		while (emojis.length>0) {
 			try {
-				await say.react(emojis.shift());
+				await msg.react(emojis.shift());
 			}
 			catch(e) {
-				console.error(e);
+				//console.error(e);
 			}
 		}
-		temp.set("level",say.id);
+		temp.set("level",msg.id);
 	})
 	.catch(console.error);
 }

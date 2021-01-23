@@ -6,19 +6,21 @@ var typingQueue=[]; // Messages being typed.
 
 module.exports=function(text, chan) {
     typingQueue.push([text,chan]);
-    while (typingQueue.length>0) {
+	while (typingQueue.length>0) {
         var [text,chan]=typingQueue.shift();
         try {
-            setTimeout(()=>{
-                chan.startTyping();
-                setTimeout(()=>{
-                    chan.stopTyping();
-                    setTimeout(()=>{
-                        chan.send(text);
-                    },proof);
-                },text.length*mpc);
-            },typingQueue.length?0:read);
-        }
+            return new Promise(msg =>{
+				setTimeout(()=>{
+					chan.startTyping();
+					setTimeout(()=>{
+						chan.stopTyping();
+						setTimeout(()=>{
+							chan.send(text).then(m=>msg(m));
+						},proof);
+					},text.length*mpc);
+				},typingQueue.length?0:read);
+			});
+		}
         catch (e) {
             console.error(e);
         }
