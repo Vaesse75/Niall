@@ -255,8 +255,8 @@ Program=function(say) {
         return level;
     })
     .then((level)=> {
-        for (a in data) {
-            if (data[a] != current && level.includes(data[a][1])) {
+		for (a in data) {
+            if (data[a] != current && level.includes(data[a][2])) {
                 voted.push(data[a]);
             }
         }
@@ -272,9 +272,9 @@ Program=function(say) {
         for (var a=1;a<6;a++) {
             if (level.includes(a)) {
                 toSay="**Or we can choose something from level "+a+":**";
-                for (b in voted) {
-                    if (voted[b][2] == a) {
-                        toSay+="\n"+voted[b][0]+" "+voted[b][1]+": <https://darebee.com/programs/"+voted[b][3]+".html>"+(voted[b][4]!=""?" ("+voted[b][4]+")":"");
+				for (b in voted) {
+				    if (voted[b][2] == a) {
+						toSay+="\n"+voted[b][0]+" "+voted[b][1]+": <https://darebee.com/programs/"+voted[b][3]+".html>"+(voted[b][4]!=""?" ("+voted[b][4]+")":"");
                         emotes.push(voted[b][0]);
                     }
                 }

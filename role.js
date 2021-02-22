@@ -21,9 +21,9 @@ Toggle=function(msg,role,say) {
 		say("Added role: **"+roleObj.name+"**",msg.channel);
 	}
 	if (msg.member.roles.cache.has(role)) {
-		// Remove a role!
-		say("Removed role: **"+roleObj.name+"**",msg.channel);
+		// Remove the role!
 		msg.member.roles.remove(role).catch(console.error);
+		say("Removed role: **"+roleObj.name+"**",msg.channel);
 	}
 }
 

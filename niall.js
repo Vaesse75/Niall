@@ -1,15 +1,16 @@
-// Set constants and variables
+ // Set constants and variables
 const Discord = require('discord.js');
 const Niall = bot = new Discord.Client(Discord.Intents.ALL);
-const {prefix,token} = require('/home/plex/bots/authNiall.json');
+const {prefix,token,habitica} = require('/home/plex/bots/authNiall.json');
 const fs = require('fs');
 const Ch = require('./ch.js');
 const Role = require('./role.js');
 const Birthday = require('./bday.js');
 const DB = require('./darebee.js');
-const Quest = require('./quest.js');
+const Habitica = require('./habitica.js');
 const Type = require('./typing.js');
 const cron = require('cron');
+global.habitica=habitica;
 
 const findPlugins=function(bot,command,plg) {
 	let [prop,key]=plg;
@@ -114,7 +115,7 @@ Niall.on('ready', () => {
 	
 	// Functions run on start
 	DB.Setup(Niall,training?testConn:DBConn,DBRef);
-	Quest.Schedule(chat,onConn,QuesterRef);
+	Habitica.Schedule(chat,onConn,QuesterRef);
 	
 	//DB.Schedule=new cron.CronJob('00 10 00 * * *', () => DB.Daily(chat)); // Place to play with wrong times while testing.
 	DB.Schedule=new cron.CronJob('00 00 13 * * *', () => DB.Daily(chat));
@@ -160,7 +161,7 @@ Niall.on('message', msg => {
 		}
 		
 		if (input.match(/^!quest$/)) {
-			Quest.Add(chat,msg.channel,QuesterRef);
+			Habitica.QuestAdd(chat,msg.channel,QuesterRef);
 		}
 		
 		//Pronoun Roles
@@ -207,7 +208,7 @@ Niall.on('message', msg => {
 		}
 		
 		// Admin only responses
-		if (msg.member.roles.cache.get("666316148589068328") || msg.member.roles.cache.get("718154951414513684")) {
+		if (msg.member.roles.cache.has("666316148589068328") || msg.member.roles.cache.has("718154951414513684")) {
 			if (input.match(/^!dbprogram/)) {
 				DB.Add(msg,chat);
 			}
