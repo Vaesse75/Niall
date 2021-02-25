@@ -1,5 +1,6 @@
 const temp = require('./temp.js');
 var quest = temp.get("quest");
+var acceptQuest=temp.get("acceptQuest");
 
 // If temp file exists, read it and return schedule info.
 Schedule=function(say,chan,role) {
@@ -24,7 +25,6 @@ AddQuest=function(say,chan,role) {
 		console.log("\n\nNew Quest");
 		console.log(data);
 		global.questObj=JSON.parse(data);
-	});
 	
 	say(role+", new quest just posted! Go to <http://www.habitica.com> to accept. Another reminder will be sent to all Questers in 23 hours.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
 	
@@ -44,6 +44,7 @@ AddQuest=function(say,chan,role) {
 	
 	// Schedule the announce.
 	Schedule(say,chan,role);
+	});
 }
 
 AnnounceQuest=function(say,chan,role) {
@@ -69,20 +70,13 @@ AcceptQuest=function(say,chan,role) {
 	});
 }
 
-API=function(command,callback) {
-	var xhttp = new XMLHttpRequest();
-	
-	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			callback(this.responseText);
-		}
-	};
-	xhttp.open("GET", command, true);
-	xhttp.setRequestHeader('x-api-user', habitica.user);
-	xhttp.setRequestHeader('x-api-key',  habitica.token);
-	xhttp.setRequestHeader('x-client', habitica.client);
-	xhttp.send();
+API=function(command,callback,data) {
+	//return callback('{"data":"true"}'); //Force success on request
+	let sa=require('superagent');
+	sa.post(command).set("x-api-user",habitica.user).set("x-api-key",habitica.key).set("x-client",habitica.client).set("accept","json");
+	if (data) sa.send(data);
+	sa.then(r=>{if (r.status==200) callback(r.text)}).catch(e=>{console.error(e.text)});
 }
 
-module.exports.Add=Add;
+module.exports.AddQuest=AddQuest;
 module.exports.Schedule=Schedule;

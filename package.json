@@ -9,11 +9,13 @@
 	"readmeFilename": "changelog.txt",
 	"dependencies": {
 		"@discordjs/uws": "^10.149.0",
+		"ajax-request": "^1.2.3",
 		"cron": "^1.8.2",
 		"discord": "^0.8.2",
 		"discord.js": "^12.3.1",
 		"fs": "0.0.1-security",
-		"linux-shell-command": "0.0.6"
+		"linux-shell-command": "0.0.6",
+		"superagent": "^6.1.0"
 	},
 	"author": "vaesse & caseyomah & jasoncollege24"
 }
