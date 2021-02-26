@@ -1,9 +1,11 @@
 const temp = require('./temp.js');
 var quest = temp.get("quest");
-var acceptQuest=temp.get("acceptQuest");
+var acceptQuest = temp.get("acceptQuest");
 
 // If temp file exists, read it and return schedule info.
 Schedule=function(say,chan,role) {
+	temp.del("");
+	
 	if (quest) {
 		var now=new Date();
 		var when=new Date(Number(quest));
@@ -12,7 +14,7 @@ Schedule=function(say,chan,role) {
 	}
 	if (acceptQuest) {
 		var now=new Date();
-		var when=new Date(Number(accept));
+		var when=new Date(Number(acceptQuest));
 		
 		setTimeout(()=>{AcceptQuest(say,chan,role)},when-now>0?when-now:0);
 	}
@@ -55,27 +57,26 @@ AnnounceQuest=function(say,chan,role) {
 	temp.del("quest");
 	
 	var acceptTime=new Date();
-	acceptTime.setHours(date.getHours() + 1);
-	temp.set("acceptQuest",acceptTime);
+	acceptTime.setHours(acceptTime.getHours() + 1);
+	temp.set("acceptQuest",Number(acceptTime));
 }
 
 AcceptQuest=function(say,chan,role) {
-	console.log("\n\nParty");
-	console.log();
-	
-	API(`https://habitica.com/api/v3/groups/:${habitica.groupId}/quests/force-start`,newQuest=>{
+	API(`https://habitica.com/api/v3/groups/${habitica.groupId}/quests/force-start`,newQuest=>{
 		say("New quest started.",chan);
 		console.log("\n\nAccepted Quest");
 		console.log(newQuest);
 	});
+	
+	temp.del("acceptQuest");
+	temp.del("questData");
 }
 
 API=function(command,callback,data) {
 	//return callback('{"data":"true"}'); //Force success on request
 	let sa=require('superagent');
-	sa.post(command).set("x-api-user",habitica.user).set("x-api-key",habitica.key).set("x-client",habitica.client).set("accept","json");
-	if (data) sa.send(data);
-	sa.then(r=>{if (r.status==200) callback(r.text)}).catch(e=>{console.error(e.text)});
+	if (data) sa.post(command).send(data).set("x-api-user",habitica.user).set("x-api-key",habitica.key).set("x-client",habitica.client).set("accept","json").end((e,r)=>{if (r.status==200) callback(r.text);else if (e) console.error(e)});
+	else sa.post(command).set("x-api-user",habitica.user).set("x-api-key",habitica.key).set("x-client",habitica.client).set("accept","json").end((e,r)=>{if (r.status==200) callback(r.text);else if (e) console.error(e)});
 }
 
 module.exports.AddQuest=AddQuest;

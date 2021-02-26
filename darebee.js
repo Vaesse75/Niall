@@ -147,6 +147,8 @@ Add=function(msg,say) {
 Daily=function(say) {
 	toSay="Workout time.\n\n"
 	
+	temp.del("");
+	
 	data=parseCSV(file);
 	current=getCurrent(data); // Current program.
 	currDate=new Date(current[current.length-1].split(/\D+/)); // Date that the current program started.
@@ -383,6 +385,7 @@ DBAnnounce=function(say,program) {
 	
 	say(toSay,loc).then(()=>{
 		temp.del("tie");
+		temp.del("program");
 	})
 	.catch(console.error);
 }
