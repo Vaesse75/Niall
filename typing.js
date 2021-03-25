@@ -1,4 +1,4 @@
-var read = 2500; // Set time (in milliseconds) to read a message before beginning typing.
+var read = 1250; // Set time (in milliseconds) to read a message before beginning typing.
 var wpm = 35; // Set typing speed in words per minute.
 var proof = 2500; // Set time (in milliseconds) to proof message before sending.
 var mpc = (wpm*5)/60000; // Convert words per minute to milliseconds per character.

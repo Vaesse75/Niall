@@ -11,22 +11,22 @@ module.exports = {
 			roll=args.shift();
 			decode=roll.match(/(\d*)d(\d+)/i);
 			let help=` Type \`!help roll\` for help.`;
-			let errr=`${roll} is invalid.`;
+			let errr=`I either don't understand or don't have the right dice for ${roll}.`;
 			if (!decode||decode.length != 3) {
 				text+=errr+help+"\n";
 			}
 			else {
 				dice=((decode[1]||1)*1);
 				sides=(decode[2]*1);
-				text=`I rolled ${roll} for you, you got: `;
+				text=`*He pulls some oddly shaped hard objects from a pouch you hadn't noticed. He selects several, placing the rest back in the pouch. Then he lets the selected ones drop with a loud clatter, staring at them intently for a couple seconds.*\n\nI rolled ${roll} for you. You got `;
 				if (dice>10) {
-					text=errr+help+"\n";
+					text=errr+help;
 				}
 				else if (sides<4) {
-					text=errr+help+"\n";
+					text=errr+help;
 				}
 				else if (sides>100) {
-					text=errr+help+"\n";
+					text=errr+help;
 				}
 				else {
 					let total=0;
@@ -35,14 +35,14 @@ module.exports = {
 						text+=save;
 						total+=save;
 						if (i<(dice-1)) {
-							text+=" + ";
+							text+=" and ";
 						}
 						else if (i>0) {
-							text+=" = "+total;
+							text+=" for a total of "+total;
 						}
 					}
 				}
-				text+="\n";
+				text+=".\n\n*He then gathers the dropped items and returns them to his pouch.*";
 			}
 		}
 		return text;
