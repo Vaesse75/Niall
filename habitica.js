@@ -22,7 +22,9 @@ Schedule=function(say,chan,role) {
 }
 
 // Announce new quest and add to temp file.
-AddQuest=function(say,chan,role) {
+AddQuest=function(say,message,role) {
+	var chan=message.channel;
+	
 	// On activation:
 	say(role+", new quest just posted! Go to <http://www.habitica.com> to accept. Another reminder will be sent to all Questers in 23 hours.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
 	

@@ -161,7 +161,7 @@ Niall.on('message', msg => {
 		}
 		
 		if (input.match(/^!quest$/)) {
-			Habitica.AddQuest(chat,msg.channel,QuesterRef);
+			Habitica.AddQuest(chat,msg,QuesterRef);
 		}
 		
 		//Pronoun Roles
