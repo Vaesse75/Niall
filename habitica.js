@@ -6,6 +6,9 @@ var acceptQuest = temp.get("acceptQuest");
 Schedule=function(say,chan,role) {
 	temp.del("");
 	
+	quest = temp.get("quest");
+	acceptQuest = temp.get("acceptQuest");
+	
 	if (acceptQuest) {
 		var now=new Date();
 		var when=new Date(Number(acceptQuest));
@@ -19,6 +22,9 @@ Schedule=function(say,chan,role) {
 		
 		setTimeout(()=>{AnnounceQuest(say,chan,role)},when-now>0?when-now:0);
 	}
+	
+	quest = temp.get("quest");
+	acceptQuest = temp.get("acceptQuest");
 }
 
 // Announce new quest and add to temp file.
@@ -48,24 +54,33 @@ AddQuest=function(say,message,role) {
 }
 
 AnnounceQuest=function(say,chan,role) {
-	say(role+", new quest will start in an hour. Last chance to go to <http://www.habitica.com> to accept.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
-	
-	temp.del("quest");
-	
-	var acceptTime=new Date();
-	acceptTime.setHours(acceptTime.getHours() + 1);
-	temp.set("acceptQuest",Number(acceptTime));
-	
-	// Schedule the announce.
-	Schedule(say,chan,role);
+	quest = temp.get("quest");
+	if (quest) {
+		say(role+", new quest will start in an hour. Last chance to go to <http://www.habitica.com> to accept.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
+		
+		temp.del("quest");
+		quest = temp.get("quest");
+		
+		var acceptTime=new Date();
+		acceptTime.setHours(acceptTime.getHours() + 1);
+		temp.set("acceptQuest",Number(acceptTime));
+				
+		// Schedule the announce.
+		Schedule(say,chan,role);
+	}
+	acceptQuest = temp.get("acceptQuest");
 }
 
 AcceptQuest=function(say,chan,role) {
-	API(`https://habitica.com/api/v3/groups/${habitica.groupId}/quests/force-start`,newQuest=>{
+	acceptQuest = temp.get("acceptQuest");
+	if (acceptQuest) {
+		API(`https://habitica.com/api/v3/groups/${habitica.groupId}/quests/force-start`,newQuest=>{
 		say("New quest started!",chan);	
-	});
-	temp.del("acceptQuest");
-	temp.del("questData");
+		});
+		temp.del("acceptQuest");
+		acceptQuest = temp.get("acceptQuest");
+		temp.del("questData");
+	}
 }
 
 API=function(command,callback,data) {

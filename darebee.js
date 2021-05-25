@@ -105,7 +105,12 @@ countReacts=async function(ID) {
 		try {
 			await chan.messages.fetch(ID)
 			.then(msg=>{
-				msg.reactions.cache.forEach((k,v)=>{reacts[k._emoji.name]=k._emoji.reaction.count});
+				msg.reactions.cache.forEach((k)=>{
+					k.fetch()
+					.then((r)=>{
+						reacts[r.name]=r.count
+					})
+				});
 			})
 			.catch(e=>{})
 		}
