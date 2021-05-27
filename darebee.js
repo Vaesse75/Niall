@@ -108,7 +108,7 @@ countReacts=async function(ID) {
 				msg.reactions.cache.forEach((k)=>{
 					k.fetch()
 					.then((r)=>{
-						reacts[r.name]=r.count
+						reacts[r._emoji.name]=r.count
 					})
 				});
 			})
