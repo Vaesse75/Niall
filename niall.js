@@ -1,20 +1,21 @@
  // Set constants and variables
-const Discord = require('discord.js');
-const Niall = bot = new Discord.Client(Discord.Intents.ALL);
 const {prefix,token,habitica} = require('/home/plex/bots/authNiall.json');
-const fs = require('fs');
-const Ch = require('./ch.js');
-const Role = require('./role.js');
-const Birthday = require('./bday.js');
-const DB = require('./darebee.js');
-const Habitica = require('./habitica.js');
-const Type = require('./typing.js');
-const cron = require('cron');
+global.Discord = require('discord.js');
+global.Niall = global.bot = global.client = new Discord.Client(Discord.Intents.ALL);
+global.fs = require('fs');
+global.cron = require('cron');
+global.Ch = require('./ch.js');
+global.Role = require('./role.js');
+global.Type = require('./typing.js');
+global.temp = require('./temp.js');
 global.habitica=habitica;
 
-const findPlugins=function(bot,command,plg) {
+global.Birthday = require('./bday.js'); // remove once properly factored
+global.DB = require('./darebee.js'); // remove once properly factored
+
+const findPlugins=function(client,command,plg) {
 	let [prop,key]=plg;
-	(plg.length>2?true:("execute" in command) && (key in command))?bot[prop].set(command[key],command):Object.keys(command).forEach((c) => {findPlugins(bot,command[c],plg);});
+	(plg.length>2?true:("execute" in command) && (key in command))?client[prop].set(command[key],command):Object.keys(command).forEach((c) => {findPlugins(client,command[c],plg);});
 }
 
 // folder/type, key
@@ -31,41 +32,55 @@ var chatQueue=[];
 // Announce functions
 //training=true; // Comment this line out for normal operations
 
-chat=async function(say,chan) {
-	if (say) {
+global.chat=async function(text,chan) {
+	if (text) {
 		if (!chan) {
 			chan=onConn;
-			console.error("No channel sent for: "+say)
+			console.error("No channel sent for: "+text)
 		}
 		if (training) {
 			chan=testConn;
 		}
-		return Type(say,chan);
+		return Type(text,chan);
 	}
 }
 
-richChat=function(say,chan,color) {
-	if (say) {
+global.richChat=function(text,chan,color) {
+	if (text) {
 		if (!color) {
 			color='#000000';
 		}
 		if (!chan) {
 			chan=onConn;
-			console.error("No channel sent for (rich): "+say)
+			console.error("No channel sent for (rich): "+text)
 		}
 		if (training) {
 			chan=testConn;
 		}
 		var embed = new Discord.MessageEmbed()
 			.setColor(color)
-			.setDescription(say);
+			.setDescription(text);
 		return chan.send({ embed });
 	};
 }
 
 // Replace user reference with "friend" (proper case) when no user referenced
-Mbr=function(mem,leadcap) {
-return leadcap?`${mem}`||"Friend":`${mem}`||"friend";
+global.Mbr=function(mem,leadcap) {
+	return leadcap?`${mem}`||"Friend":`${mem}`||"friend";
+}
+
+runSocials=function(msg) {
+	text=[];
+	client.socials.forEach(social => {if (social.trigger(msg)) text.push(social.execute(msg));});
+	if (text.length > 0) {
+		if (Array.isArray(text)) {
+			text=text.flat();
+			i=Math.floor(Math.random()*text.length);
+			if (typeof text[i] == "string") chat(text[i],msg.channel);
+			else console.error(`Nothing to say:\nindex ${i} of:\n${text}`);
+		}
+		else if (typeof text == "string") chat(text,msg.channel);
+	}
 }
 
 // Initial setup
@@ -85,24 +100,14 @@ Niall.on('ready', () => {
 	Role.set("leader","666316148589068328");
 	Role.set("quester","693612089134153829");
 	Role.set("donor","759087823394439218");
-    
+	
     // Define frequently used references
     onConn = Ch.get("inn");
 	testConn = Ch.get("test");
-	heraldConn = Ch.get("herald");
 	DBConn = Ch.get("darebee");
-	testRef = Ch.ref("test");
-	GuideRef = Ch.ref("guide");
-	QuestRef = Ch.ref("quest");
-	GemRef = Ch.ref("gem");
-	DBChan = Ch.ref("darebee");
-	LeaderRef = Role.ref("leader");
-	DBRef = Role.ref("darebee");
-	QuesterRef = Role.ref("quester");
-	DonorRef = Role.ref("donor");
-    
+	
 	// Wakeup message
-    var say=[
+    var text=[
 		"Ahem.",
 		"*Sits up.*",
 		"*Coughs quietly.*",
@@ -111,153 +116,60 @@ Niall.on('ready', () => {
 		"*Shakes his head to wake himself up.*",
 		"*Adjusts himself in the corner he's hiding in.*"
 	];
-	chat(say[Math.floor(Math.random()*say.length)],onConn);
+	chat(text[Math.floor(Math.random()*text.length)],onConn);
 	
 	// Functions run on start
-	DB.Setup(Niall,training?testConn:DBConn,DBRef);
-	Habitica.Schedule(chat,onConn,QuesterRef);
+	DB.Setup(training?testConn:DBConn);
 	
-	//DB.Schedule=new cron.CronJob('00 10 00 * * *', () => DB.Daily(chat)); // Place to play with wrong times while testing.
-	DB.Schedule=new cron.CronJob('00 00 13 * * *', () => DB.Daily(chat));
+	
+	//DB.Schedule=new cron.CronJob('00 10 00 * * *', () => DB.Daily()); // Place to play with wrong times while testing.
+	DB.Schedule=new cron.CronJob('00 00 13 * * *', () => DB.Daily());
 	DB.Schedule.start();
 	
-	//
-	Birthday.Schedule=new cron.CronJob('00 00 12 * * *', () => Birthday.Daily(chat,onConn));
-	Birthday.Schedule.start();
+	// Birthday.Schedule=new cron.CronJob('00 00 12 * * *', () => Birthday.Daily(onConn));
+	// Birthday.Schedule.start();
 });
 
 // Reply to messages
 Niall.on('message', msg => {
+	// Ignore messages from yourself
 	if (bot.user.id!==msg.author.id) {
 		// Respond to any capitalization
 		var input=msg.content.toLowerCase();
-				
+		
 		// Triggered responses
-		if (input.match(/^!help/)||msg.content.match(/^help.*niall.*/)) {
-			chat(Mbr(msg.member,1)+", here's what I can do!\n\n"
-			+"**!tip** - I'll give you a random tip.\n"
-			+"**!time** - I'll tell you what time it is for me.  (Useful when comparing to other times I may give.)\n"
-			+"**!bday** - Tell me your birthday so we can celebrate together.\n"
-			+"**!quest** - Use this when you send the invite for a new quest and I'll let our Questers know when there's an hour left until the quest is set to start.\n\n"
-			+"**!roll** - Rolls the given number of dice. Default is 1d6.  (Eg, ``!roll 1d20``)"
-			+"ROLES\n"
-			+"**!she** - Toggles on and off the She/Her pronoun role.\n"
-			+"**!he** - Toggles on and off the He/Him pronoun role.\n"
-			+"**!they** - Toggles on and off the They/Them pronoun role.\n"
-			+"**!quester** - Toggles on and off the Quester role (get tagged an hour before quests go live).\n"
-			+"**!workout** - Toggle participation and tagging for daily workouts. (In the "+DBChan+".)\n"
-			+"**!spectator** - Toggles ability to observe the "+testRef+".  (You may get extra wrong pings with it on.)\n"
-			+"**!donor** - Toggles inclusion in the list of people willing to offer gem rewards for special tasks, see pinned message in "+GemRef+" for details.\n"
-			+"**!healer**/**!warrior**/**!mage**/**!rogue** - Switch to the chosen class. (You choose your class at level 10.)\n\n"
-			+"**!help** - I'll display this message.",msg.channel)
-		}
-		if (input.match(/^!time$/)||input.match(/^!date$/)) {
-			var dt=new Date();
-			var dateForm="The current date is: "+dt.getFullYear().toString().padStart(4,'0')+"-"+(dt.getMonth()+1).toString().padStart(2,'0')+"-"+dt.getDate().toString().padStart(2,'0')+" at "+dt.getHours().toString().padStart(2,'0')+":"+dt.getMinutes().toString().padStart(2,'0');
-			chat(dateForm,msg.channel);
-		}
 		if (input.match(/^!bday/)) {
 			Birthday.Add(msg,chat);
 		}
 		
-		if (input.match(/^!quest$/)) {
-			Habitica.AddQuest(chat,msg,QuesterRef);
-		}
-		
-		//Pronoun Roles
-		if (input.match(/^!she$/)||input.match(/^!her$/)) {
-			Role.Toggle(msg,"668111455475859488",chat);
-		}
-		if (input.match(/^!he$/)||input.match(/^!him$/)) {
-			Role.Toggle(msg,"668111419262238750",chat);
-		}
-
-		if (input.match(/^!they$/)||input.match(/^!them$/)) {
-			Role.Toggle(msg,"668111380913717272",chat);
-		}
-		
-		//Other Roles
-		if (input.match(/^!quester$/)) {
-			Role.Toggle(msg,"693612089134153829",chat);
-		}
-		
-		if (input.match(/^!workout$/)) {
-			Role.Toggle(msg,"674677574898548766",chat);
-		}
-		
-		if (input.match(/^!spectator$/)||input.match(/^!bot$/)) {
-			Role.Toggle(msg,"696409841538695278",chat);
-		}
-		
-		if (input.match(/^!donor$/)) {
-			Role.Toggle(msg,"759087823394439218",chat);
-		}
-		
-		//Classes Switch 
-		if (input.match(/^!healer$/)) {
-			Role.Class(msg,"healer",chat);
-		}
-		if (input.match(/^!warrior$/)) {
-			Role.Class(msg,"warrior",chat);
-		}
-		if (input.match(/^!mage$/)) {
-			Role.Class(msg,"mage",chat);
-		}
-		if (input.match(/^!rogue$/)) {
-			Role.Class(msg,"rogue",chat);
-		}
-		
-		// Admin only responses
-		if (msg.member.roles.cache.has("666316148589068328") || msg.member.roles.cache.has("718154951414513684")) {
-			if (input.match(/^!dbprogram/)) {
-				DB.Add(msg,chat);
-			}
+		// Birthday.Check(msg.author.id,chat,msg.channel); // Birthday greetings
 			
-			// Remove once automation complete and daily shout works correctly
-			if (input.match(/^!level$/)) {
-				DB.Level(chat);
+		const args = msg.content.slice(prefix.length).split(/ +/);
+		const commandName = args.shift().toLowerCase();
+		if (msg.content.startsWith(`${prefix}${commandName}`) && bot.commands.has(commandName)) {
+			const command=bot.commands.get(commandName) || bot.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+			if (command.args && !args.length) {
+				let text = `You're missing details, ${msg.author}!`;
+				if (command.usage) {
+					text += `\nTry saying it this way: ${command.usage}`;
+				}
+				return chat(text,msg.channel);
 			}
-			if (input.match(/^!program$/)) {
-				DB.Program(chat);
-			}
-			if (input.match(/^!count$/)) {
-				DB.Count(chat);
-			}
+			else command.execute(msg, args);
 		}
-		if (input.match(/^!daily$/)) {
-			DB.Daily(chat);
-		}
-		
-		// Modularized responses
-		require('./social.js')(input,chat,msg.channel); // Social responses
-		Birthday.Check(msg.author.id,chat,msg.channel); // Birthday greetings
-		require('./tips.js')(input,richChat,msg.channel,'#ffffcc'); // Tips
-	}
-	
-	if (bot.user.id !== msg.author.id) {
-        const args = msg.content.slice(prefix.length).split(/ +/);
-        const commandName = args.shift().toLowerCase();
-        if (msg.content.startsWith(`${prefix}${commandName}`) && bot.commands.has(commandName)) {
-            const command=bot.commands.get(commandName);
-            if (command.args && !args.length) {
-                let reply = `You didn't provide any arguments, ${msg.author}!`;
-                if (command.usage) {
-                    reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
-                }
-                return chat(reply,msg.channel);
-            }
-            else chat(command.execute(msg, args),msg.channel);
-        }
 		
 		// Plain text social responses
-		/*else {
+		else {
 			runSocials(msg);
-		}*/
-    }
+		}
+	}
 });
 
 // New member greeting
 Niall.on('guildMemberAdd', member => {
+	GuideRef = Ch.ref("guide");
+	LeaderRef = Role.ref("leader");
+	
     chat("Welcome to the party, "+Mbr(member,0)+"! If you're new to Habitica, please check out the "+GuideRef+". Until the "+LeaderRef+" has verified you're in the party, you'll not have permission to talk... sorry about that, but this is supposed to be a private area for the party.\n\nOnce you've been vetted, to see what I can help you with, type `!help`.");
 });
 

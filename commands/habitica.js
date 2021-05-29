@@ -1,9 +1,38 @@
-const temp = require('./temp.js');
+const role = Role.ref("quester");
 var quest = temp.get("quest");
 var acceptQuest = temp.get("acceptQuest");
 
+onConn = Ch.get("inn");
+
 // If temp file exists, read it and return schedule info.
-Schedule=function(say,chan,role) {
+module.exports = {
+	name: 'quest',
+	description: "Use this when you que a new quest and I'll let our Questers know when there's an hour left until the quest is set to start.",
+	usage: `\`!quest\``,
+	execute(msg, args) {
+		// Calculate now plus 23 hours.  Record to a temp file.
+		var date=new Date();
+		date.setHours(date.getHours() + 23);
+		//date.setMinutes(date.getMinutes() + 2); // Short announce time for testing.
+		temp.set("quest",Number(date));
+		
+		quest=temp.get("quest");
+		
+		// Schedule the reminder announce.
+		Schedule(msg.channel);
+		
+		// Accept the quest for me if I didn't trigger the command
+		if (message.author.id !== '341458616424857602') {
+			API(`https://habitica.com/api/v3/groups/${habitica.groupId}/quests/accept`,(data)=>{
+				console.log("Accepted quest for Vaesse.");
+			});
+		}
+		
+		chat(role+", new quest just posted! Go to <http://www.habitica.com> to accept. Another reminder will be sent to all Questers in 23 hours.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",msg.channel);
+	}
+}
+	
+Schedule=function(chan) {
 	temp.del("");
 	
 	quest = temp.get("quest");
@@ -13,50 +42,24 @@ Schedule=function(say,chan,role) {
 		var now=new Date();
 		var when=new Date(Number(acceptQuest));
 		
-		setTimeout(()=>{AcceptQuest(say,chan,role)},when-now>0?when-now:0);
+		setTimeout(()=>{AcceptQuest(chan)},when-now>0?when-now:0);
 		temp.del("quest");
 	}
 	else if (quest) {
 		var now=new Date();
 		var when=new Date(Number(quest));
 		
-		setTimeout(()=>{AnnounceQuest(say,chan,role)},when-now>0?when-now:0);
+		setTimeout(()=>{AnnounceQuest(chan)},when-now>0?when-now:0);
 	}
 	
 	quest = temp.get("quest");
 	acceptQuest = temp.get("acceptQuest");
 }
 
-// Announce new quest and add to temp file.
-AddQuest=function(say,message,role) {
-	var chan=message.channel;
-	
-	// On activation:
-	say(role+", new quest just posted! Go to <http://www.habitica.com> to accept. Another reminder will be sent to all Questers in 23 hours.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
-	
-	// Calculate now plus 23 hours.  Record to a temp file.
-	var date=new Date();
-	date.setHours(date.getHours() + 23);
-	//date.setMinutes(date.getMinutes() + 2); // Short announce time for testing.
-	temp.set("quest",Number(date));
-	
-	quest=temp.get("quest");
-	
-	// Schedule the announce.
-	Schedule(say,chan,role);
-	
-	// Accept the quest for me if I didn't trigger the command
-	if (message.author.id !== '341458616424857602') {
-		API(`https://habitica.com/api/v3/groups/${habitica.groupId}/quests/accept`,(data)=>{
-			console.log("Accepted quest for Vaesse.");
-		});
-	}
-}
-
-AnnounceQuest=function(say,chan,role) {
+AnnounceQuest=function(chan) {
 	quest = temp.get("quest");
 	if (quest) {
-		say(role+", new quest will start in an hour. Last chance to go to <http://www.habitica.com> to accept.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
+		chat(role+", new quest will start in an hour. Last chance to go to <http://www.habitica.com> to accept.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
 		
 		temp.del("quest");
 		quest = temp.get("quest");
@@ -66,16 +69,16 @@ AnnounceQuest=function(say,chan,role) {
 		temp.set("acceptQuest",Number(acceptTime));
 				
 		// Schedule the announce.
-		Schedule(say,chan,role);
+		Schedule(chan);
 	}
 	acceptQuest = temp.get("acceptQuest");
 }
 
-AcceptQuest=function(say,chan,role) {
+AcceptQuest=function(chan) {
 	acceptQuest = temp.get("acceptQuest");
 	if (acceptQuest) {
 		API(`https://habitica.com/api/v3/groups/${habitica.groupId}/quests/force-start`,newQuest=>{
-		say("New quest started!",chan);	
+		chat("New quest started!",chan);	
 		});
 		temp.del("acceptQuest");
 		acceptQuest = temp.get("acceptQuest");
@@ -102,5 +105,4 @@ API=function(command,callback,data) {
 	});
 }
 
-module.exports.AddQuest=AddQuest;
-module.exports.Schedule=Schedule;
+Schedule(onConn);

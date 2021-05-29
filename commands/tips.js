@@ -1,6 +1,14 @@
-module.exports=function(input,say,chan,color) {
-	if (input.match(/^!tip.?/)) {
-		var text=[
+onConn = Ch.get("inn");
+GuideRef = Ch.ref("guide");
+QuestRef = Ch.ref("quest");
+
+module.exports = {
+	name: 'tip',
+	aliases: ['tips'],
+	description: "I'll give you a random tip.",
+	usage: `\`!tip\``,
+	execute(msg, args) {
+		var text = [
 			"Have you looked at our "+GuideRef+"?  It has LOTS of tips and tricks.",
 			"You can learn more about the three types of Habitica [tasks](https://discordapp.com/channels/664197181846061077/664199483025915904/664219509187411970) (Habits, Dailies, and To-Dos) in our adventure guide.",
 			"There's a pretty good description of the Habitica [classes](https://discordapp.com/channels/664197181846061077/664199483025915904/664219513172131843) in our adventure guide.",
@@ -15,6 +23,7 @@ module.exports=function(input,say,chan,color) {
 			"For some suggestions on how to get out of the Tavern, [check this out](https://discord.com/channels/664197181846061077/664199483025915904/664219548756738052).",
 			"To make sure your goals are clear and reachable, each one should be:\n**S**pecific (Walk for 30 minutes *instead of* Exercise)\n**M**easurable (Save $20 *instead of* Save money)\n**A**ttainable (is this something *you* can do?)\n**R**elevant (is this going to make you or your life better)**T**imely (setting a time frame can help keep you on target)\n\n[More Details/Examples Here](https://habitica.fandom.com/wiki/SMART_Goal_Setting)"
 		];
-		say(text[Math.floor(Math.random()*text.length)],chan,color);
+		
+		richChat(text[Math.floor(Math.random()*text.length)],msg.channel,'#ffffcc');
 	}
 };

@@ -45,11 +45,6 @@ module.exports = {
 				text+=".\n\n*He then gathers the dropped items and returns them to his pouch.*";
 			}
 		}
-		return text;
-		
-		/*msg.reply(text).catch(error => {
-			console.error(`There was an issue rolling the dice.`, error);
-			chan.send(`Invalid die roll.`);
-		});*/
+		chat(text,msg.channel);
 	}
 }
