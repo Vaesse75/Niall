@@ -1,4 +1,3 @@
-var fs = require('fs');
 var file="./temp.csv";
 
 // Read CSV file, return array.
@@ -18,14 +17,14 @@ get=function(key) {
 	if (!key) {
 		return false;
 	}
-	return temp[key];
+	return t[key];
 }
 
 set=function(key,input) {
 	if (!key||!input) {
 		return false;
 	}
-	temp[key]=input;
+	t[key]=input;
 	write();
 }
 
@@ -33,15 +32,15 @@ del=function(key) {
 	if (!key) {
 		return true;
 	}
-	delete temp[key];
+	delete t[key];
 	write();
 }
 
 write=function() {
-	// Convert temp to csv
+	// Convert t to csv
     var csv=[];
-    for (key in temp) {
-        var data=temp[key];
+    for (key in t) {
+        var data=t[key];
         if (Array.isArray(data)) {
             data=data.join('","');
         }
@@ -52,7 +51,7 @@ write=function() {
 	fs.writeFileSync(file, csv);
 }
 
-temp=parseCSV(file,1);
+t=parseCSV(file,1);
 module.exports.get=get;
 module.exports.set=set;
 module.exports.del=del;

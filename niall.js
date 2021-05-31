@@ -2,8 +2,9 @@
 const {prefix,token,habitica} = require('/home/plex/bots/authNiall.json');
 global.Discord = require('discord.js');
 global.Niall = global.bot = global.client = new Discord.Client(Discord.Intents.ALL);
-global.fs = require('fs');
 global.cron = require('cron');
+global.fs = require('fs');
+global.csv = require('./csv.js');
 global.Ch = require('./ch.js');
 global.Role = require('./role.js');
 global.Type = require('./typing.js');
@@ -121,6 +122,7 @@ Niall.on('ready', () => {
 	// Functions run on start
 	DB.Setup(training?testConn:DBConn);
 	
+	//DB daily if not done today and between 13:00 and 23:59.
 	
 	//DB.Schedule=new cron.CronJob('00 10 00 * * *', () => DB.Daily()); // Place to play with wrong times while testing.
 	DB.Schedule=new cron.CronJob('00 00 13 * * *', () => DB.Daily());
@@ -140,6 +142,10 @@ Niall.on('message', msg => {
 		// Triggered responses
 		if (input.match(/^!bday/)) {
 			Birthday.Add(msg,chat);
+		}
+		
+		if (input.match(/^!daily$/)) {
+			DB.Daily();
 		}
 		
 		// Birthday.Check(msg.author.id,chat,msg.channel); // Birthday greetings

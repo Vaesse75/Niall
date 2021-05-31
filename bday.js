@@ -1,5 +1,4 @@
 //Set contants and variables
-var fs = require('fs');
 var file="./birthday.csv";
 Schedule=[];
 
@@ -20,7 +19,7 @@ nth=function(d) {
 
 Import=function() {
 	var sch; // Array (0 indexed)
-	var temp; // String for file write
+	var t; // String for file write
 	var dates=[]; // Keyed array
 	
 	// Read the file
@@ -52,8 +51,8 @@ Import=function() {
 	for (var a in dates) {
 		sch.push('"'+a+'","'+dates[a].join('","')+'"');
 	}
-	temp=sch.join("\n")+"\n";
-	fs.writeFileSync(file, temp);
+	t=sch.join("\n")+"\n";
+	fs.writeFileSync(file, t);
 }
 
 module.exports.Add=function(msg, say) {

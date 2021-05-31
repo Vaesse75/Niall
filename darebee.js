@@ -19,7 +19,7 @@ parseCSV=function(file,a) {
 
 Import=function() {
 	var sch; // Array (0 indexed)
-	var temp; // String for file write
+	var t; // String for file write
 	var progs=[]; // Keyed array
 	
 	// Read the file
@@ -49,8 +49,8 @@ Import=function() {
 	for (var a in progs) {
 		sch.push('"'+a+'","'+progs[a].join('","')+'"');
 	}
-	temp=sch.join("\n")+"\n";
-	fs.writeFileSync(file, temp);
+	t=sch.join("\n")+"\n";
+	fs.writeFileSync(file, t);
 }
 
 // Figure out what the current program is from workout.csv.
@@ -75,11 +75,14 @@ getCurrent=function(data) {
 
 getNext=function(data) {
 	var test=temp.get("next");
+	console.log(test);
+	var program;
 	for (a in data) {
 		if (test==data[a][0]) {
 			program=data[a];
 		}
 	}
+	console.log(program);
 	if (program) return program;
 	else return false;
 }
@@ -160,6 +163,7 @@ Daily=function() {
 	start=new Date(currDate);start.setDate(start.getDate()+(currPart+1)); // Date that the new program is set to start.
 	temp.del("daily");
 	temp.set("daily",dateForm(new Date(),true));
+	
 	if (current!="") {
 		var part=Math.ceil((new Date()-currDate) / (1000 * 60 * 60 * 24)); // Today's part of the current program.
 		
@@ -394,13 +398,9 @@ DBAnnounce=function(program) {
 }
 
 //Set contants and variables
-var fs = require('fs');
-const temp = require('./temp.js');
-var csv=require('./csv.js')
 var file="./darebee.csv";
 var loc;
 var ref;
-var client;
 var workout;
 var data=parseCSV(file);
 var current=getCurrent(data); // Current program.
