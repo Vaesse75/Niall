@@ -1,4 +1,5 @@
-const role = Role.ref("quester");
+Role.set("quester","693612089134153829");
+var ref = Role.ref("quester");
 var quest = temp.get("quest");
 var acceptQuest = temp.get("acceptQuest");
 
@@ -22,13 +23,13 @@ module.exports = {
 		Schedule(msg.channel);
 		
 		// Accept the quest for me if I didn't trigger the command
-		if (message.author.id !== '341458616424857602') {
+		if (msg.author.id !== '341458616424857602') {
 			API(`https://habitica.com/api/v3/groups/${habitica.groupId}/quests/accept`,(data)=>{
 				console.log("Accepted quest for Vaesse.");
 			});
 		}
 		
-		chat(role+", new quest just posted! Go to <http://www.habitica.com> to accept. Another reminder will be sent to all Questers in 23 hours.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",msg.channel);
+		chat(ref+", new quest just posted! Go to <http://www.habitica.com> to accept. Another reminder will be sent to all Questers in 23 hours.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",msg.channel);
 	}
 }
 	
@@ -59,7 +60,7 @@ Schedule=function(chan) {
 AnnounceQuest=function(chan) {
 	quest = temp.get("quest");
 	if (quest) {
-		chat(role+", new quest will start in an hour. Last chance to go to <http://www.habitica.com> to accept.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
+		chat(ref+", new quest will start in an hour. Last chance to go to <http://www.habitica.com> to accept.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
 		
 		temp.del("quest");
 		quest = temp.get("quest");
