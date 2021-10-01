@@ -2,6 +2,7 @@ QuestRef = Ch.ref("quest");
 GemRef = Ch.ref("gem");
 DBChan = Ch.ref("darebee");
 testRef = Ch.ref("test");
+CalRef = Ch.ref("calendar");
 
 module.exports = {
 	name: 'she',
@@ -37,6 +38,12 @@ module.exports = {
 	execute(msg, args) {
 		Role.Toggle(msg,"674677574898548766");
 	},
+	name: 'calendar',
+	description: "Toggles on and off the Calendar Quest role (we play every other Sunday in the "+CalRef+" channel).",
+	usage: `\`!calendar\``,
+	execute(msg, args) {
+		Role.Toggle(msg,"693612089134153829");
+	},
 	name: 'spectator',
 	description: "Toggles ability to observe the "+testRef+".  (You may get extra wrong pings with it on.)",
 	usage: `\`!spectator\``,
@@ -44,7 +51,7 @@ module.exports = {
 		Role.Toggle(msg,"696409841538695278");
 	},
 	name: 'donor',
-	description: "Toggles inclusion in the list of people willing to offer gem rewards for special tasks, see pinned message in "+GemRef+" for details.",
+	description: "Toggles Gem Donor role, see pinned message in "+GemRef+" for details.",
 	usage: `\`!donor\``,
 	execute(msg, args) {
 		Role.Toggle(msg,"759087823394439218");

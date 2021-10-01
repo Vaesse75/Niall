@@ -97,6 +97,7 @@ Niall.on('ready', () => {
 	Ch.set("herald","664889622987538435");
 	Ch.set("darebee","695401715616186429");
 	Ch.set("gem","759088721424285777");
+	Ch.set("calendar","799331225046351883");
 	Role.set("darebee","674677574898548766");
 	Role.set("leader","666316148589068328");
 	Role.set("quester","693612089134153829");

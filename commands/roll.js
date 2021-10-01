@@ -1,50 +1,76 @@
+let min=2,max=100,count=10,def="1d20"
+function calcMatch(s) {
+	m=(s||this).match(/^(.*?)(\d*)d(\d+|%)(.*)$/i);
+	if (m?.length != 5) {
+		return undefined;
+	}
+	m[2]=m[2]||1;
+	if (m[2]>(count||10) || m[3]<(min||2) || m[3]>(max||100)) {
+		return undefined;
+	}
+    let total=0,raw=[],percent=false;
+	if(m[3]=="%") {
+		percent=true;
+		m[3]=10;
+	}
+    for (let i=0;i<m[2];i++) {
+        let save=Math.ceil(Math.random()*m[3]);
+		if (percent) {
+			save*=10;
+		}
+        raw.push(save);
+        total+=save;
+    }
+    return {
+        pre:`${m[1]}`,
+        input:`${m[2]}d${m[3]}`,
+        post:`${m[4]}`,
+        raw:raw,
+        sum:total,
+        outsum:`${m[1]}${total}${m[4]}`,
+        outraw:`${m[1]}(${raw.join("+")})${m[4]}`
+    };
+}
+Object.defineProperty(String.prototype,"calcMatch",{get:calcMatch});
 module.exports = {
 	name: 'roll',
 	aliases: ['dice'],
-	description: 'Rolls the given number of dice. Default is 1d6.',
-	usage: `\`!roll\`, \`!roll d6\`, \`!roll 1d20\`, between 1-10 dice, 4-100 sides.`,
+	description: `Rolls the given number of dice. Default is "${def}".`,
+	usage: `\`!roll\`, \`!roll d6\`, \`!roll 1d20\`, between 1-${count} dice, ${min}-${max} sides.`,
 	execute(msg, args) {
-		let chan=msg.channel,user=msg.reply,bot=msg.client,text;
-		if (args.length==0){args.push("1d6")}
+		let text="",errf=false;
+		if (args.length==0) {
+            args.push(def);
+        }
+        let pre=[`*He pulls out a pouch you hadn't noticed.* `,`*He selects several oddly shaped hard objects, placing the rest back in the pouch. Then he lets the selected ones drop with a loud clatter, staring at them intently for a couple seconds.*`,`\n\n${msg.member.nickname||msg.author.username}, `];
 		while (args.length>0) {
-			let errd;
-			roll=args.shift();
-			decode=roll.match(/(\d*)d(\d+)/i);
-			let help=` Type \`!help roll\` for help.`;
-			let errr=`I either don't understand or don't have the right dice for ${roll}.`;
-			if (!decode||decode.length != 3) {
-				text+=errr+help+"\n";
+			let dice=[],raws=[],sums=[],roll=args.shift(),error=true;
+			while(calcMatch(roll)) {
+				roll=calcMatch(roll);
+				dice.push(roll.input);
+				raws.push(roll.raw);
+				sums.push(roll.sum);
+				roll=roll.outraw;
+				error=false;
+			}
+			console.log(text.length);
+			if (text.length) {
+				text +="\n\nAlso, ";
+			}
+			if (error) {
+				errf=true;
+				text+=`I either don't understand or don't have the right dice for ${roll}.`;
 			}
 			else {
-				dice=((decode[1]||1)*1);
-				sides=(decode[2]*1);
-				text=`*He pulls some oddly shaped hard objects from a pouch you hadn't noticed. He selects several, placing the rest back in the pouch. Then he lets the selected ones drop with a loud clatter, staring at them intently for a couple seconds.*\n\nI rolled ${roll} for you. You got `;
-				if (dice>10) {
-					text=errr+help;
-				}
-				else if (sides<4) {
-					text=errr+help;
-				}
-				else if (sides>100) {
-					text=errr+help;
-				}
-				else {
-					let total=0;
-					for (let i=0;i<dice;i++) {
-						save=Math.floor(Math.random()*sides)+1;
-						text+=save;
-						total+=save;
-						if (i<(dice-1)) {
-							text+=" and ";
-						}
-						else if (i>0) {
-							text+=" for a total of "+total;
-						}
-					}
-				}
-				text+=".\n\n*He then gathers the dropped items and returns them to his pouch.*";
+				errf=false;
+				let rol1=roll;
+				[["{","abs("],["}",")"],["[[]","sqrt("],["]",")"]]
+					.forEach(r=>{rol1=rol1.replace(RegExp(r[0],"g"),r[1]);});
+				text+=`I rolled ${dice.length>1?dice.slice(0,-1).join(", "):dice[0]}${dice.length>2?",":""}${dice.length>1?" and "+dice.slice(-1)[0]:""} for you. `;
+				with(Math) text+=`You got ${roll} for a total of${(rol1.match(/[a-z]+/gi)||[]).map(p=>this[p]=Math.hasOwnProperty(p)).every(v=>v===true)?" "+eval(rol1):"... I can't figure this out"}.`;
 			}
 		}
-		chat(text,msg.channel);
+		post="\n\n*He then gathers the dropped items and returns them to his pouch.*";
+		msg.channel.send(`${pre[0]}${errf?"":pre[1]}${pre[2]}${text}${errf?"":post}`,msg.channel);
 	}
 }
