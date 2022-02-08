@@ -75,16 +75,43 @@ getCurrent=function(data) {
 
 getNext=function(data) {
 	var test=temp.get("next");
-	console.log(test);
 	var program;
 	for (a in data) {
-		if (test==data[a][0]) {
+		if (test[0]==data[a][0]) {
 			program=data[a];
 		}
 	}
 	console.log(program);
 	if (program) return program;
 	else return false;
+}
+
+nextProg=function(loc) {
+	prog=getNext(data);
+	if (prog) {
+		text=("The next program we have selected appears to be:");
+		text+=("\n"+prog[0]+" **"+prog[1]+"**");
+		text+=(prog[4]!=""?" ("+prog[4]+")":"");
+		text+=(":\n<https://darebee.com/programs/"+prog[3]+".html>");
+	}
+	if (!prog) {
+		text=("I do not see a planned program to do next.");
+	}
+	chat(text,loc);
+}
+
+currProg=function(loc) {
+	prog=current;
+	if (prog) {
+		text=("The program we're currently working on appears to be:");
+		text+=("\n"+prog[0]+" **"+prog[1]+"**");
+		text+=(prog[4]!=""?" ("+prog[4]+")":"");
+		text+=(":\n<https://darebee.com/programs/"+prog[3]+".html>");
+	}
+	if (!prog) {
+		text=("I do not see a current program.");
+	}
+	chat(text,loc);
 }
 
 // Take date add two days, return date and formatted String.
@@ -408,6 +435,8 @@ var currDate=new Date(current[current.length-1].split(/\D+/)); // Date that the 
 var currPart=current[5]||30; // Number of parts in the current program (defalts to 30).
 var start=new Date(currDate);start.setDate(start.getDate()+(currPart)); // Date that the new program is set to start.
 
+module.exports.nextProg=nextProg;
+module.exports.currProg=currProg;
 module.exports.Setup=Setup;
 module.exports.Daily=Daily;
 module.exports.Add=Add;

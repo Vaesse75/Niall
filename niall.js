@@ -148,6 +148,12 @@ Niall.on('message', msg => {
 		if (input.match(/^!daily$/)) {
 			DB.Daily();
 		}
+		if (input.match(/^!current$/)) {
+			DB.currProg(msg.channel);
+		}
+		if (input.match(/^!next$/)) {
+			DB.nextProg(msg.channel);
+		}
 		
 		// Birthday.Check(msg.author.id,chat,msg.channel); // Birthday greetings
 			

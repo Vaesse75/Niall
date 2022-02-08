@@ -1,0 +1,13 @@
+[
+  '🪑',
+  'Arms of Steel: Chair Edition',
+  '1',
+  'arms-of-steel-chair-edition',
+  'fully seated, upperbody only',
+  '',
+  '2022-02-09'
+]
+
+> Niall@1.2.0 start /home/Plex/Bots/Niall
+> node .
+
