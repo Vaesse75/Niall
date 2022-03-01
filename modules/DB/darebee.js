@@ -114,7 +114,7 @@ currProg=function(loc) {
 	chat(text,loc);
 }
 
-// Take date add two days, return date and formatted String.
+// Take date, return in approx ISO format.
 dateForm=function(date,noTime) {
     if (!date) {
 		date=new Date()
@@ -122,7 +122,7 @@ dateForm=function(date,noTime) {
 	else {
         date=new Date(date);
     }
-	return(date.toISOString().slice(0,10)+(noTime?"":" at "+date.toISOString().slice(11,16)+" eastern"));
+	return(date.toISOString().slice(0,10)+(noTime?"":" at "+date.toISOString().slice(11,16)));
 }
 
 // Look at message passed and make array of reacts and counts
@@ -233,22 +233,12 @@ Daily=function() {
 	workout = temp.get("workout");
 }
 
-// State time when votes will be tallied.
-Tally=function() {
-	var tally="in 48 hours";
-	var date=new Date();
-	date.setDate(date.getDate() + 2);
-	
-	if (date) {
-		tally="on "+dateForm(date);
-	}
-	return tally;
-}
-
 // Vote for level of next Darebee program
 Level=function() {
 	// Darebee Pick Levels
-	chat(ref+", our current program is "+current[1]+" at level "+current[2]+". What level(s) would you like to be included in the vote for next Darebee program?  Vote for as many as you want, votes will be tallied "+Tally()+" or thereabouts.",loc).then(async (msg) => {
+	var date=new Date();
+	date.setDate(date.getDate() + 2);
+	chat(ref+", our current program is "+current[1]+" at level "+current[2]+". What level(s) would you like to be included in the vote for next Darebee program?  Vote for as many as you want, votes will be tallied <t:"+date+":R> on <t:"+date+":F> or thereabouts.",loc).then(async (msg) => {
 		var emojis=["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣"];
 		while (emojis.length>0) {
 			try {
@@ -319,7 +309,9 @@ Program=function() {
         }
         
         // Votes will be tallied on [date] at [time].
-        chat("**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Vote for as many as you want, though Discord only allows 20 different reacts. Votes will be tallied "+Tally()+" or thereabouts. (If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)",loc)
+        var date=new Date();
+		date.setDate(date.getDate() + 2);
+		chat("**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Vote for as many as you want, though Discord only allows 20 different reacts. Votes will be tallied <t:"+date+":R> on <t:"+date+":F> or thereabouts. (If we EVER start a program and agree it's too challenging to keep up with, we can drop back and re-decide.)",loc)
         .then(async (message) => {
             temp.del("level");
             temp.set("program",message.id);
@@ -396,7 +388,9 @@ Tie=function(program) {
 		text+=ties[b][0]+" "+ties[b][1]+": <https://darebee.com/programs/"+ties[b][3]+".html>"+(ties[b][4]!=""?" ("+ties[b][4]+")":"")+"\n";
 		emotes.push(ties[b][0]);
 	}
-	text+="\n**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Votes will be tallied "+Tally()+" or thereabouts. A tie on this vote and I'll randomly chose one of those winners.";
+	var date=new Date();
+	date.setDate(date.getDate() + 2);
+	text+="\n**VOTE HERE**\nRespond to **this** message with the emoji of your preferred program. Votes will be tallied <t:"+date+":R> on <t:"+date+":F> or thereabouts. A tie on this vote and I'll randomly chose one of those winners.";
 	
 	chat(text,loc).then(async (message) => {
 		temp.del("program");
@@ -414,7 +408,7 @@ DBAnnounce=function(program) {
 	
 	text=ref+", the results are in!\n\nOur new program will be:\n"+winner[0]+" "+winner[1]+": <https://darebee.com/programs/"+winner[3]+".html>"+(winner[4]!=""?" ("+winner[4]+")":"")+"\n\n";
 	
-	text+="We'll be starting it on "+dateForm(start,true)+".";
+	text+="We'll be starting it <t:"+start+":R> on <t:"+start+":f>.";
 	temp.set("next",winner[0],dateForm(start,true));
 	
 	chat(text,loc).then(()=>{
@@ -425,7 +419,7 @@ DBAnnounce=function(program) {
 }
 
 //Set contants and variables
-var file="./darebee.csv";
+var file="./modules/DB/darebee.csv";
 var loc;
 var ref;
 var workout;

@@ -1,5 +1,5 @@
 //Set contants and variables
-var file="./birthday.csv";
+var file="./modules/Birthday/birthday.csv";
 Schedule=[];
 
 months=function(num) {

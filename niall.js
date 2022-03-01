@@ -4,15 +4,26 @@ global.Discord = require('discord.js');
 global.Niall = global.bot = global.client = new Discord.Client(Discord.Intents.ALL);
 global.cron = require('cron');
 global.fs = require('fs');
-global.csv = require('./csv.js');
-global.Ch = require('./ch.js');
-global.Role = require('./role.js');
-global.Type = require('./typing.js');
-global.temp = require('./temp.js');
-global.habitica=habitica;
+global.habitica=habitica; // Globalizes the keys for Habitica
 
-global.Birthday = require('./bday.js'); // remove once properly factored
-global.DB = require('./darebee.js'); // remove once properly factored
+global.Birthday = require('./modules/Birthday/bday.js'); // remove once properly factored
+global.DB = require('./modules/DB/darebee.js'); // remove once properly factored
+
+// Prototypes
+Date.prototype.toString=function() {
+	return Math.floor(this.valueOf()/1000);
+}
+
+// Load cores
+bot.core=new Discord.Collection();
+let tmp=fs.readdirSync("./core").filter(file => file.endsWith(".js"));
+for (const file of tmp) global[file.slice(0,-3)]=require(`./core/${file}`);
+
+console.log(bot.core);
+for(cores in bot.core) {
+	cores.execute();
+	console.log(cores);
+}
 
 const findPlugins=function(client,command,plg) {
 	let [prop,key]=plg;
@@ -20,7 +31,7 @@ const findPlugins=function(client,command,plg) {
 }
 
 // folder/type, key
-let plugins=[["commands","name"],["socials","trigger"],["core","name",0]];
+let plugins=[["commands","name"],["socials","trigger"]];
 plugins.forEach(plg=>{
 	bot[plg[0]]=new Discord.Collection();
 	let tmp=fs.readdirSync("./"+plg[0]).filter(file => file.endsWith(".js"));
@@ -31,7 +42,7 @@ var training;
 var chatQueue=[];
 
 // Announce functions
-//training=true; // Comment this line out for normal operations
+training=true; // Comment this line out for normal operations
 
 global.chat=async function(text,chan) {
 	if (text) {
@@ -153,6 +164,9 @@ Niall.on('message', msg => {
 		}
 		if (input.match(/^!next$/)) {
 			DB.nextProg(msg.channel);
+		}
+		if (input.match(/^!level$/)) {
+			DB.Level(msg.channel);
 		}
 		
 		// Birthday.Check(msg.author.id,chat,msg.channel); // Birthday greetings

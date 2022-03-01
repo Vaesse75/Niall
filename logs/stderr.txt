@@ -1,210 +1,15 @@
-(node:1713) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/channels/695401715616186429/messages failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1713) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 215)
-(node:1713) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:1915) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1915) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:1915) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:1803) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1803) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:1803) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:1693) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1693) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:1693) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:1671) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1671) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:1671) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:1783) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1783) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:1783) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:1785) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1785) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:1785) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:1752) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1752) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:1752) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-No channel sent for: <@&693612089134153829>, new quest will start in an hour. Last chance to go to <http://www.habitica.com> to accept.
+/home/Plex/Bots/Niall/niall.js:27
+let tmp=fs.readdirSync("./core".filter(file => file.endsWith(".js"));
+                                                                   ^
 
-Use **!Quester** to toggle whether you want to be pinged by these reminders.
-No channel sent for: New quest started!
-(node:1925) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1925) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:1925) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:2288) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:2288) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:2288) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:2318) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:2318) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:2318) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:1961) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1961) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:1961) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:1957) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1957) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:1957) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:1954) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1954) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:1954) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:2680) UnhandledPromiseRejectionWarning: TypeError: Cannot read property '0' of undefined
-    at DBAnnounce (/home/Plex/Bots/Niall/darebee.js:388:71)
-    at CountVotes (/home/Plex/Bots/Niall/darebee.js:345:3)
-    at /home/Plex/Bots/Niall/darebee.js:353:65
-    at runMicrotasks (<anonymous>)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:2680) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 110)
-(node:2680) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:2680) UnhandledPromiseRejectionWarning: TypeError: Cannot read property '0' of undefined
-    at DBAnnounce (/home/Plex/Bots/Niall/darebee.js:388:71)
-    at CountVotes (/home/Plex/Bots/Niall/darebee.js:345:3)
-    at /home/Plex/Bots/Niall/darebee.js:353:65
-    at runMicrotasks (<anonymous>)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(node:2680) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 111)
-/home/Plex/Bots/Niall/darebee.js:193
-					next.pop();
-					     ^
-
-TypeError: next.pop is not a function
-    at Object.Daily (/home/Plex/Bots/Niall/darebee.js:193:11)
-    at CronJob.<anonymous> (/home/Plex/Bots/Niall/niall.js:129:58)
-    at CronJob.fireOnTick (/home/Plex/Bots/Niall/node_modules/cron/lib/cron.js:600:23)
-    at Timeout.callbackWrapper [as _onTimeout] (/home/Plex/Bots/Niall/node_modules/cron/lib/cron.js:667:10)
-    at listOnTimeout (internal/timers.js:557:17)
-    at processTimers (internal/timers.js:500:7)
-npm ERR! code ELIFECYCLE
-npm ERR! errno 1
-npm ERR! Niall@1.2.0 start: `node .`
-npm ERR! Exit status 1
-npm ERR! 
-npm ERR! Failed at the Niall@1.2.0 start script.
-npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
-
-npm ERR! A complete log of this run can be found in:
-npm ERR!     /home/plex/.npm/_logs/2021-12-29T18_00_00_099Z-debug.log
-(node:2141) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:2141) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:2141) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:2137) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:2137) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:2137) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:2177) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:2177) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:2177) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:2184) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:2184) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:2184) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-(node:2175) UnhandledPromiseRejectionWarning: FetchError: request to https://discord.com/api/v7/gateway/bot failed, reason: getaddrinfo EAI_AGAIN discord.com
-    at RequestHandler.execute (/home/Plex/Bots/Niall/node_modules/discord.js/src/rest/RequestHandler.js:107:21)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:2175) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
-(node:2175) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-No channel sent for: <@&693612089134153829>, new quest will start in an hour. Last chance to go to <http://www.habitica.com> to accept.
-
-Use **!Quester** to toggle whether you want to be pinged by these reminders.
-No channel sent for: New quest started!
-(node:1596488) UnhandledPromiseRejectionWarning: TypeError: Cannot read property '0' of undefined
-    at DBAnnounce (/home/Plex/Bots/Niall/darebee.js:388:71)
-    at CountTies (/home/Plex/Bots/Niall/darebee.js:321:5)
-    at /home/Plex/Bots/Niall/darebee.js:352:58
-    at runMicrotasks (<anonymous>)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:1596488) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 1)
-(node:1596488) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-/home/Plex/Bots/Niall/darebee.js:193
-					next.pop();
-					     ^
-
-TypeError: next.pop is not a function
-    at Object.Daily (/home/Plex/Bots/Niall/darebee.js:193:11)
-    at CronJob.<anonymous> (/home/Plex/Bots/Niall/niall.js:129:58)
-    at CronJob.fireOnTick (/home/Plex/Bots/Niall/node_modules/cron/lib/cron.js:600:23)
-    at Timeout.callbackWrapper [as _onTimeout] (/home/Plex/Bots/Niall/node_modules/cron/lib/cron.js:667:10)
-    at listOnTimeout (internal/timers.js:557:17)
-    at processTimers (internal/timers.js:500:7)
-npm ERR! code ELIFECYCLE
-npm ERR! errno 1
-npm ERR! Niall@1.2.0 start: `node .`
-npm ERR! Exit status 1
-npm ERR! 
-npm ERR! Failed at the Niall@1.2.0 start script.
-npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
-
-npm ERR! A complete log of this run can be found in:
-npm ERR!     /home/plex/.npm/_logs/2022-02-02T18_00_00_028Z-debug.log
-/home/Plex/Bots/Niall/darebee.js:92
-	chat("\n"+prog[0]+" "+prog[1]+": <https://darebee.com/programs/"+prog[3]+".html>"+(prog[4]!=""?" ("+prog[4]+")":"");
-	                                                                                                                  ^
-/home/Plex/Bots/Niall/darebee.js:93
-		text+=("\n"+prog[0]+" **"+prog[1]+"**"+(prog[4]!=""?" ("+prog[4]+")":""": <https://darebee.com/programs/"+prog[3]+".html>"));
-		                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-SyntaxError: Unexpected string
+SyntaxError: missing ) after argument list
     at wrapSafe (internal/modules/cjs/loader.js:1001:16)
     at Module._compile (internal/modules/cjs/loader.js:1049:27)
     at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
     at Module.load (internal/modules/cjs/loader.js:950:32)
     at Function.Module._load (internal/modules/cjs/loader.js:790:12)
-    at Module.require (internal/modules/cjs/loader.js:974:19)
-    at require (internal/modules/cjs/helpers.js:101:18)
-    at Object.<anonymous> (/home/Plex/Bots/Niall/niall.js:15:13)
-    at Module._compile (internal/modules/cjs/loader.js:1085:14)
-    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:75:12)
+    at internal/main/run_main_module.js:17:47
 npm ERR! code ELIFECYCLE
 npm ERR! errno 1
 npm ERR! Niall@1.2.0 start: `node .`
@@ -214,22 +19,19 @@ npm ERR! Failed at the Niall@1.2.0 start script.
 npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
 
 npm ERR! A complete log of this run can be found in:
-npm ERR!     /home/plex/.npm/_logs/2022-02-08T19_09_09_951Z-debug.log
-/home/Plex/Bots/Niall/darebee.js:94
-		text+=("(prog[4]!=""?" ("+prog[4]+")":"");
-		                   ^^^
+npm ERR!     /home/plex/.npm/_logs/2022-03-01T20_15_26_649Z-debug.log
+/home/Plex/Bots/Niall/niall.js:28
+for (const file of tmp) global[file.slice(0,-3)]=require(`./core/${file}`),plg);
+                                                                              ^
 
-SyntaxError: Unexpected string
+SyntaxError: Unexpected token ')'
     at wrapSafe (internal/modules/cjs/loader.js:1001:16)
     at Module._compile (internal/modules/cjs/loader.js:1049:27)
     at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
     at Module.load (internal/modules/cjs/loader.js:950:32)
     at Function.Module._load (internal/modules/cjs/loader.js:790:12)
-    at Module.require (internal/modules/cjs/loader.js:974:19)
-    at require (internal/modules/cjs/helpers.js:101:18)
-    at Object.<anonymous> (/home/Plex/Bots/Niall/niall.js:15:13)
-    at Module._compile (internal/modules/cjs/loader.js:1085:14)
-    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:75:12)
+    at internal/main/run_main_module.js:17:47
 npm ERR! code ELIFECYCLE
 npm ERR! errno 1
 npm ERR! Niall@1.2.0 start: `node .`
@@ -239,22 +41,27 @@ npm ERR! Failed at the Niall@1.2.0 start script.
 npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
 
 npm ERR! A complete log of this run can be found in:
-npm ERR!     /home/plex/.npm/_logs/2022-02-08T19_12_03_801Z-debug.log
-/home/Plex/Bots/Niall/darebee.js:94
-		text+=((prog[4]!=""?" ("+prog[4]+")":"");
-		                                        ^
+npm ERR!     /home/plex/.npm/_logs/2022-03-01T20_17_01_201Z-debug.log
+internal/fs/utils.js:332
+    throw err;
+    ^
 
-SyntaxError: Unexpected token ';'
-    at wrapSafe (internal/modules/cjs/loader.js:1001:16)
-    at Module._compile (internal/modules/cjs/loader.js:1049:27)
+Error: ENOENT: no such file or directory, open './birthday.csv'
+    at Object.openSync (fs.js:497:3)
+    at Object.readFileSync (fs.js:393:35)
+    at Import (/home/Plex/Bots/Niall/modules/Birthday/bday.js:26:14)
+    at Object.<anonymous> (/home/Plex/Bots/Niall/modules/Birthday/bday.js:115:1)
+    at Module._compile (internal/modules/cjs/loader.js:1085:14)
     at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
     at Module.load (internal/modules/cjs/loader.js:950:32)
     at Function.Module._load (internal/modules/cjs/loader.js:790:12)
     at Module.require (internal/modules/cjs/loader.js:974:19)
-    at require (internal/modules/cjs/helpers.js:101:18)
-    at Object.<anonymous> (/home/Plex/Bots/Niall/niall.js:15:13)
-    at Module._compile (internal/modules/cjs/loader.js:1085:14)
-    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
+    at require (internal/modules/cjs/helpers.js:101:18) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: './birthday.csv'
+}
 npm ERR! code ELIFECYCLE
 npm ERR! errno 1
 npm ERR! Niall@1.2.0 start: `node .`
@@ -264,4 +71,64 @@ npm ERR! Failed at the Niall@1.2.0 start script.
 npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
 
 npm ERR! A complete log of this run can be found in:
-npm ERR!     /home/plex/.npm/_logs/2022-02-08T19_12_37_649Z-debug.log
+npm ERR!     /home/plex/.npm/_logs/2022-03-01T20_29_15_374Z-debug.log
+internal/fs/utils.js:332
+    throw err;
+    ^
+
+Error: ENOENT: no such file or directory, open './darebee.csv'
+    at Object.openSync (fs.js:497:3)
+    at Object.readFileSync (fs.js:393:35)
+    at parseCSV (/home/Plex/Bots/Niall/modules/DB/darebee.js:9:18)
+    at Object.<anonymous> (/home/Plex/Bots/Niall/modules/DB/darebee.js:426:10)
+    at Module._compile (internal/modules/cjs/loader.js:1085:14)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
+    at Module.load (internal/modules/cjs/loader.js:950:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:790:12)
+    at Module.require (internal/modules/cjs/loader.js:974:19)
+    at require (internal/modules/cjs/helpers.js:101:18) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: './darebee.csv'
+}
+npm ERR! code ELIFECYCLE
+npm ERR! errno 1
+npm ERR! Niall@1.2.0 start: `node .`
+npm ERR! Exit status 1
+npm ERR! 
+npm ERR! Failed at the Niall@1.2.0 start script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /home/plex/.npm/_logs/2022-03-01T20_31_00_321Z-debug.log
+internal/fs/utils.js:332
+    throw err;
+    ^
+
+Error: ENOENT: no such file or directory, open '../temp.csv'
+    at Object.openSync (fs.js:497:3)
+    at Object.readFileSync (fs.js:393:35)
+    at parseCSV (/home/Plex/Bots/Niall/core/temp.js:5:18)
+    at Object.<anonymous> (/home/Plex/Bots/Niall/core/temp.js:54:3)
+    at Module._compile (internal/modules/cjs/loader.js:1085:14)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
+    at Module.load (internal/modules/cjs/loader.js:950:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:790:12)
+    at Module.require (internal/modules/cjs/loader.js:974:19)
+    at require (internal/modules/cjs/helpers.js:101:18) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '../temp.csv'
+}
+npm ERR! code ELIFECYCLE
+npm ERR! errno 1
+npm ERR! Niall@1.2.0 start: `node .`
+npm ERR! Exit status 1
+npm ERR! 
+npm ERR! Failed at the Niall@1.2.0 start script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /home/plex/.npm/_logs/2022-03-01T20_32_31_931Z-debug.log
