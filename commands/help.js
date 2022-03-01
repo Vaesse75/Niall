@@ -10,7 +10,6 @@ module.exports = {
 	execute(msg, args) {
 		chat(Mbr(msg.member,1)+", here's what I can do!\n\n"
 		+"**!tip** - I'll give you a random tip.\n"
-		+"**!time** - I'll tell you what time it is for me.  (Useful when comparing to other times I may give.)\n"
 		+"**!bday** - Tell me your birthday so we can celebrate together. (Note: Currently I'm keeping track of birthdays, but not actually announcing them.)\n"
 		+"**!quest** - Use this when you que a new quest and I'll send out quest reminders.\n"
 		+"**!roll** - Rolls the given number of dice. Default is 1d6.\n"
