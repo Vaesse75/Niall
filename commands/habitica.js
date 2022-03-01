@@ -29,7 +29,7 @@ module.exports = {
 			});
 		}
 		
-		chat(ref+", new quest just posted! Go to <http://www.habitica.com> to accept. Another reminder will be sent to all Questers in 23 hours.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",msg.channel);
+		chat(ref+", new quest just posted! Go to <http://www.habitica.com> to accept. Another reminder will be sent to all Questers <t:"+date+":R>.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",msg.channel);
 	}
 }
 	
@@ -58,17 +58,17 @@ Schedule=function(chan) {
 }
 
 AnnounceQuest=function(chan) {
+	var acceptTime=new Date();
+	acceptTime.setHours(acceptTime.getHours() + 1);
+	temp.set("acceptQuest",Number(acceptTime));
+	
 	quest = temp.get("quest");
 	if (quest) {
-		chat(ref+", new quest will start in an hour. Last chance to go to <http://www.habitica.com> to accept.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
+		chat(ref+", new quest will start <t:"+acceptTime+":R>. Last chance to go to <http://www.habitica.com> to accept.\n\nUse **!Quester** to toggle whether you want to be pinged by these reminders.",chan);
 		
 		temp.del("quest");
 		quest = temp.get("quest");
 		
-		var acceptTime=new Date();
-		acceptTime.setHours(acceptTime.getHours() + 1);
-		temp.set("acceptQuest",Number(acceptTime));
-				
 		// Schedule the announce.
 		Schedule(chan);
 	}

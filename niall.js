@@ -42,7 +42,7 @@ var training;
 var chatQueue=[];
 
 // Announce functions
-training=true; // Comment this line out for normal operations
+//training=true; // Comment this line out for normal operations
 
 global.chat=async function(text,chan) {
 	if (text) {

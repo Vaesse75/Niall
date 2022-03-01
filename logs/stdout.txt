@@ -46,3 +46,8 @@ Collection(0) [Map] {}
 > node .
 
 Collection(0) [Map] {}
+
+> Niall@1.2.0 start /home/Plex/Bots/Niall
+> node .
+
+Collection(0) [Map] {}
