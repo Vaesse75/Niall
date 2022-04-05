@@ -408,7 +408,7 @@ DBAnnounce=function(program) {
 	
 	text=ref+", the results are in!\n\nOur new program will be:\n"+winner[0]+" "+winner[1]+": <https://darebee.com/programs/"+winner[3]+".html>"+(winner[4]!=""?" ("+winner[4]+")":"")+"\n\n";
 	
-	text+="We'll be starting it <t:"+start+":R> on <t:"+start+":f>.";
+	text+="We'll be starting it <t:"+start+":R> on <t:"+start+":F>.";
 	temp.set("next",winner[0],dateForm(start,true));
 	
 	chat(text,loc).then(()=>{
@@ -418,17 +418,19 @@ DBAnnounce=function(program) {
 	.catch(console.error);
 }
 
-//Set contants and variables
+//Set constants and variables
 var file="./modules/DB/darebee.csv";
 var loc;
 var ref;
 var workout;
 var data=parseCSV(file);
 var current=getCurrent(data); // Current program.
-var currDate=new Date(current[current.length-1].split(/\D+/)); // Date that the current program started.
+var shout=13; // Hours after midnight shout is scheduled for.
+var currDate=new Date(current[current.length-1].split(/\D+/)).setHours(currDate.getHours()+shout); // Date that the current program started.
 var currPart=current[5]||30; // Number of parts in the current program (defalts to 30).
 var start=new Date(currDate);start.setDate(start.getDate()+(currPart)); // Date that the new program is set to start.
 
+module.exports.shout=shout;
 module.exports.nextProg=nextProg;
 module.exports.currProg=currProg;
 module.exports.Setup=Setup;

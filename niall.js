@@ -1,4 +1,4 @@
- // Set constants and variables
+// Set constants and variables
 const {prefix,token,habitica} = require('/home/plex/bots/authNiall.json');
 global.Discord = require('discord.js');
 global.Niall = global.bot = global.client = new Discord.Client(Discord.Intents.ALL);
@@ -137,7 +137,7 @@ Niall.on('ready', () => {
 	//DB daily if not done today and between 13:00 and 23:59.
 	
 	//DB.Schedule=new cron.CronJob('00 10 00 * * *', () => DB.Daily()); // Place to play with wrong times while testing.
-	DB.Schedule=new cron.CronJob('00 00 13 * * *', () => DB.Daily());
+	DB.Schedule=new cron.CronJob('00 00 '+DB.shout+' * * *', () => DB.Daily());
 	DB.Schedule.start();
 	
 	// Birthday.Schedule=new cron.CronJob('00 00 12 * * *', () => Birthday.Daily(onConn));
