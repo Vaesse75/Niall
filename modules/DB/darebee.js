@@ -426,7 +426,7 @@ var workout;
 var data=parseCSV(file);
 var current=getCurrent(data); // Current program.
 var shout=13; // Hours after midnight shout is scheduled for.
-var currDate=new Date(current[current.length-1].split(/\D+/)).setHours(currDate.getHours()+shout); // Date that the current program started.
+var currDate=new Date(current[current.length-1].split(/\D+/)); currDate=currDate.setHours(currDate.getHours()+shout); // Date that the current program started.
 var currPart=current[5]||30; // Number of parts in the current program (defalts to 30).
 var start=new Date(currDate);start.setDate(start.getDate()+(currPart)); // Date that the new program is set to start.
 
